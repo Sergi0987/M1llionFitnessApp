@@ -40,14 +40,14 @@ From the project root:
 psql -U postgres -d m1llion_fitness_platform -f server/schema.sql
 ```
 
-The schema creates a default admin:
+## Demo Login
 
-```txt
-email: admin@m1llionfitness.com
-password: Admin123!
-```
+This project includes a pre-configured demo administrator account for evaluation.
 
-Change this password after first login in a production app.
+**Email:** admin@m1llionfitness.com  
+**Password:** Admin123!
+
+> This account is intended for demonstration purposes only. The application uses JWT authentication and bcrypt password hashing. In a production environment, credentials would be managed securely through environment variables and user management workflows.
 
 ## Backend Setup
 
