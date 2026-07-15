@@ -138,7 +138,7 @@ export default function ClientPortal({ theme }) {
 
           <label className="block">
             <span className={`mb-2 block text-sm font-semibold ${classes.muted}`}>
-              Progress rating (1–10)
+              Difficulty rating (1–10)
             </span>
 
             <input
