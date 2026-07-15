@@ -12,6 +12,9 @@ export default function PublicHome({ theme, setTheme }) {
   const mobileBtnRef = useRef(null);
   const isDark = theme === 'dark';
 
+  const logo = isDark ? '/logoWhite.png' : '/logoBlack.png';
+
+
   useEffect(() => {
     if (!mobileNavOpen) {
       return undefined;
@@ -64,7 +67,11 @@ export default function PublicHome({ theme, setTheme }) {
   }
 
   return (
-    <div className={isDark ? 'bg-slate-950 text-white' : 'bg-white text-slate-900'}>
+    <div className={`min-h-screen px-4 sm:px-6 ${
+        isDark
+          ? 'bg-slate-950 text-white'
+          : 'bg-white text-slate-950'
+      }`}>
       <a
         href="#main"
         className={`sr-only fixed left-3 top-3 z-[9999] rounded-xl border bg-white px-4 py-2 shadow focus:not-sr-only ${focusRing}`}
@@ -75,7 +82,7 @@ export default function PublicHome({ theme, setTheme }) {
       <header className={`sticky top-0 z-50 border-b backdrop-blur ${isDark ? 'border-white/10 bg-slate-950/90' : 'bg-white/90'}`}>
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
           <a href="#top" className={`flex items-center ${focusRing}`} aria-label="M1llion Fitness home">
-            <img src="/logoCropped.png" alt="M1llion Fitness" className="h-10 w-auto md:h-12" />
+            <img src={logo} alt="M1llion Fitness" className="h-10 w-auto md:h-12" />
           </a>
 
           <nav aria-label="Primary" className="hidden items-center gap-8 text-sm font-medium md:flex">

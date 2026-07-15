@@ -10,6 +10,8 @@ export default function Login({ theme, setTheme }) {
   const [error, setError] = useState('');
   const isDark = theme === 'dark';
 
+  const logo = isDark ? '/logoWhite.png' : '/logoBlack.png';
+
   async function handleSubmit(event) {
     event.preventDefault();
     setError('');
@@ -24,10 +26,16 @@ export default function Login({ theme, setTheme }) {
   }
 
   return (
-    <main className={`min-h-screen px-6 ${isDark ? 'bg-slate-950 text-white' : 'bg-white text-slate-950'}`}>
+     <main
+      className={`min-h-screen px-4 sm:px-6 ${
+        isDark
+          ? 'bg-slate-950 text-white'
+          : 'bg-white text-slate-950'
+      }`}
+    >
       <header className="mx-auto flex max-w-6xl items-center justify-between py-5">
         <Link to="/">
-          <img src="/logoCropped.png" alt="M1llion Fitness" className="h-10 w-auto md:h-12" />
+          <img src={logo} alt="M1llion Fitness" className="h-10 w-auto md:h-12" />
         </Link>
         <ThemeToggle theme={theme} setTheme={setTheme} />
       </header>

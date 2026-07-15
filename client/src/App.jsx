@@ -15,17 +15,26 @@ function Shell({ children, role, theme, setTheme }) {
   const navigate = useNavigate();
   const isDark = theme === 'dark';
 
+  const logo = isDark ? '/logoWhite.png' : '/logoBlack.png';
+
+
   function logout() {
     clearSession();
     navigate('/');
   }
 
   return (
-    <main className={`min-h-screen ${isDark ? 'bg-slate-950 text-slate-100' : 'bg-white text-slate-950'}`}>
+    <main
+      className={`min-h-screen px-4 sm:px-6 ${
+        isDark
+          ? 'bg-slate-950 text-white'
+          : 'bg-white text-slate-950'
+      }`}
+    >
       <header className={`border-b ${isDark ? 'border-slate-800 bg-slate-950/95' : 'border-slate-200 bg-white/95 backdrop-blur'}`}>
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
           <Link to={role === 'admin' ? '/admin' : '/app'} className="text-left">
-            <img src="/logoCropped.png" alt="M1llion Fitness" className="h-10 w-auto" />
+            <img src={logo} alt="M1llion Fitness" className="h-10 w-auto" />
             <p className={`mt-1 text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
               {role === 'admin' ? 'Coach dashboard' : 'Client portal'}
             </p>
