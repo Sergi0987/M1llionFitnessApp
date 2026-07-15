@@ -138,7 +138,7 @@ export default function ClientPortal({ theme }) {
 
           <label className="block">
             <span className={`mb-2 block text-sm font-semibold ${classes.muted}`}>
-              Difficulty rating (1–10)
+              This weeks' rating (1–10)
             </span>
 
             <input
