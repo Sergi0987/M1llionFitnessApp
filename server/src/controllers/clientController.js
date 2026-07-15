@@ -164,16 +164,48 @@ export async function updateClient(req, res, next) {
 }
 
 export async function deleteClient(req, res, next) {
-  try {
-    const result = await query('DELETE FROM clients WHERE id = $1 RETURNING id', [req.params.id]);
+  const dbClient = await pool.connect();
 
-    if (result.rows.length === 0) {
+  try {
+    await dbClient.query('BEGIN');
+
+    const clientResult = await dbClient.query(
+      `SELECT id, user_id
+       FROM clients
+       WHERE id = $1
+       FOR UPDATE`,
+      [req.params.id],
+    );
+
+    if (clientResult.rows.length === 0) {
+      await dbClient.query('ROLLBACK');
       return res.status(404).json({ message: 'Client not found.' });
     }
 
+    const userId = clientResult.rows[0].user_id;
+
+    await dbClient.query(
+      'DELETE FROM clients WHERE id = $1',
+      [req.params.id],
+    );
+
+    if (userId) {
+      await dbClient.query(
+        `DELETE FROM users
+         WHERE id = $1
+           AND role = 'client'`,
+        [userId],
+      );
+    }
+
+    await dbClient.query('COMMIT');
+
     res.status(204).send();
   } catch (error) {
+    await dbClient.query('ROLLBACK');
     next(error);
+  } finally {
+    dbClient.release();
   }
 }
 

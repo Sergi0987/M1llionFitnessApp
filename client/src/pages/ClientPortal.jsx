@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Badge from '../components/Badge.jsx';
-import BodyProgressVisual from '../components/BodyProgressVisual.jsx';
+// import BodyProgressVisual from '../components/BodyProgressVisual.jsx';
 import Button from '../components/Button.jsx';
 import { portalApi } from '../services/api.js';
 import { formatDate } from '../utils/formatDate.js';
@@ -59,12 +59,14 @@ export default function ClientPortal({ theme }) {
           <p className="mt-2 text-3xl font-black">{data.workouts.length}</p>
         </article>
       </div>
+      {/* 
       <div className="mt-8">
         <BodyProgressVisual
           rating={latestCheckin?.progress_rating || 1}
           theme={theme}
-        />
-      </div>
+        /> 
+      </div> 
+      */}
       <div className="mt-8 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
         <form onSubmit={addCheckin} className={`space-y-4 rounded-2xl border p-6 ${classes.panel}`}>
           <h2 className="text-xl font-bold">Weekly check-in</h2>
