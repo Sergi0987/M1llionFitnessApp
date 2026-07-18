@@ -58,8 +58,11 @@ CREATE TABLE IF NOT EXISTS checkins (
   progress_rating INTEGER NOT NULL CHECK (
     progress_rating BETWEEN 1 AND 10
   ),
+  photo TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+-- Safe to run on databases created before the photo column existed.
+ALTER TABLE checkins ADD COLUMN IF NOT EXISTS photo TEXT;
 CREATE TABLE IF NOT EXISTS client_notes (
   id SERIAL PRIMARY KEY,
   client_id INTEGER NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
@@ -88,11 +91,5 @@ CREATE INDEX IF NOT EXISTS idx_program_workouts_program_id ON program_workouts(p
 CREATE INDEX IF NOT EXISTS idx_program_exercises_workout_id ON program_exercises(program_workout_id);
 CREATE INDEX IF NOT EXISTS idx_workouts_client_id ON workouts(client_id);
 CREATE INDEX IF NOT EXISTS idx_exercises_workout_id ON exercises(workout_id);
--- Demo administrator account for portfolio use only.
--- Password: Admin123!
-INSERT INTO users (email, password, role)
-VALUES (
-    'admin@m1llionfitness.com',
-    '$2b$12$wcgelz5DGRBnZHAQq94qW.oTmbSILe92mWW7QhxwDqZVuQxk/GhoS',
-    'admin'
-  ) ON CONFLICT (email) DO NOTHING;
+-- To create the initial admin account, run:
+--   node scripts/create-admin.js <email> <password>

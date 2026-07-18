@@ -40,14 +40,16 @@ From the project root:
 psql -U postgres -d m1llion_fitness_platform -f server/schema.sql
 ```
 
-## Demo Login
+## Admin Account
 
-This project includes a pre-configured demo administrator account for evaluation.
+Create the initial admin account (or reset an existing admin's password) with:
 
-**Email:** admin@m1llionfitness.com  
-**Password:** Admin123!
+```powershell
+cd server
+node scripts/create-admin.js you@example.com YourStrongPassword
+```
 
-> This account is intended for demonstration purposes only. The application uses JWT authentication and bcrypt password hashing. In a production environment, credentials would be managed securely through environment variables and user management workflows.
+The application uses JWT authentication and bcrypt password hashing. Admins create client accounts from the dashboard, can reset a client's password from the client's detail page, and every logged-in user can change their own password from the Account page.
 
 ## Backend Setup
 

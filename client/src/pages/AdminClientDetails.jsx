@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Badge from '../components/Badge.jsx';
 import Button from '../components/Button.jsx';
+import WeightChart from '../components/WeightChart.jsx';
 import { adminApi } from '../services/api.js';
 import { formatDate } from '../utils/formatDate.js';
 import { getThemeClasses } from '../utils/themeClasses.js';
@@ -16,6 +17,8 @@ export default function AdminClientDetails({ theme }) {
   const [status, setStatus] = useState('Active');
   const [selectedProgram, setSelectedProgram] = useState('');
   const [note, setNote] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [resetMessage, setResetMessage] = useState('');
   const [error, setError] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -85,6 +88,22 @@ export default function AdminClientDetails({ theme }) {
       await adminApi.addClientNote(id, note);
       setNote('');
       await load();
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
+  async function resetPassword(event) {
+    event.preventDefault();
+
+    try {
+      setError('');
+      setResetMessage('');
+
+      const result = await adminApi.resetClientPassword(id, newPassword);
+
+      setNewPassword('');
+      setResetMessage(result.message);
     } catch (err) {
       setError(err.message);
     }
@@ -219,6 +238,42 @@ export default function AdminClientDetails({ theme }) {
             Add Note
           </Button>
         </form>
+
+        <form
+          onSubmit={resetPassword}
+          className={`rounded-2xl border p-6 ${classes.panel}`}
+        >
+          <h2 className="text-xl font-bold">Reset login password</h2>
+
+          <p className={`mt-2 text-sm ${classes.muted}`}>
+            Set a new portal password for this client. Share it with them
+            securely — they can change it themselves from their Account page.
+          </p>
+
+          <input
+            className={`mt-4 w-full rounded-xl border px-4 py-3 outline-none focus:border-pink-500 ${classes.input}`}
+            type="text"
+            minLength={8}
+            placeholder="New password (at least 8 characters)"
+            value={newPassword}
+            onChange={(event) => setNewPassword(event.target.value)}
+            required
+          />
+
+          {resetMessage ? (
+            <p
+              className={`mt-3 rounded-md bg-emerald-500/10 p-3 text-sm ${
+                classes.isDark ? 'text-emerald-300' : 'text-emerald-600'
+              }`}
+            >
+              {resetMessage}
+            </p>
+          ) : null}
+
+          <Button className="mt-4" type="submit">
+            Reset Password
+          </Button>
+        </form>
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-3">
@@ -281,6 +336,58 @@ export default function AdminClientDetails({ theme }) {
           <p className={`mt-2 text-sm ${classes.muted}`}>
             {client.workouts?.length || 0} workouts
           </p>
+        </div>
+      </div>
+
+      <div className="mt-8 grid gap-6 lg:grid-cols-2">
+        <div className={`rounded-2xl border p-6 ${classes.panel}`}>
+          <h2 className="text-xl font-bold">Weight trend</h2>
+
+          <div className="mt-4">
+            <WeightChart checkins={client.checkins} theme={theme} />
+          </div>
+        </div>
+
+        <div className={`rounded-2xl border p-6 ${classes.panel}`}>
+          <h2 className="text-xl font-bold">Recent check-ins</h2>
+
+          <div className="mt-4 max-h-96 space-y-3 overflow-y-auto pr-1">
+            {client.checkins?.length ? (
+              client.checkins.map((checkin) => (
+                <article
+                  key={checkin.id}
+                  className={`rounded-xl p-4 ${classes.subPanel}`}
+                >
+                  <p
+                    className={`text-sm font-semibold ${
+                      classes.isDark ? 'text-pink-300' : 'text-pink-600'
+                    }`}
+                  >
+                    {Number(checkin.weight).toString()} lbs ·{' '}
+                    {checkin.progress_rating}/10 ·{' '}
+                    {formatDate(checkin.created_at)}
+                  </p>
+
+                  <p className={`mt-2 text-sm leading-6 ${classes.muted}`}>
+                    {checkin.notes}
+                  </p>
+
+                  {checkin.photo ? (
+                    <img
+                      src={checkin.photo}
+                      alt={`Progress photo from ${formatDate(checkin.created_at)}`}
+                      className="mt-3 max-h-48 rounded-lg object-cover"
+                      loading="lazy"
+                    />
+                  ) : null}
+                </article>
+              ))
+            ) : (
+              <p className={`text-sm ${classes.muted}`}>
+                No check-ins submitted yet.
+              </p>
+            )}
+          </div>
         </div>
       </div>
 

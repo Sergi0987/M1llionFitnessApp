@@ -8,6 +8,7 @@ export default function Login({ theme, setTheme }) {
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const isDark = theme === 'dark';
 
   const logo = isDark ? '/logoWhite.png' : '/logoBlack.png';
@@ -17,11 +18,13 @@ export default function Login({ theme, setTheme }) {
     setError('');
 
     try {
+      setLoading(true);
       const session = await authApi.login(form);
       saveSession(session);
       navigate(session.user.role === 'admin' ? '/admin' : '/app');
     } catch (err) {
       setError(err.message);
+      setLoading(false);
     }
   }
 
@@ -62,8 +65,14 @@ export default function Login({ theme, setTheme }) {
           onChange={(event) => setForm({ ...form, password: event.target.value })}
           required
         />
-        {error ? <p className="mt-4 rounded-md bg-red-500/10 p-3 text-sm text-red-200">{error}</p> : null}
-        <Button className="mt-6 w-full" type="submit">Login</Button>
+        {error ? (
+          <p className={`mt-4 rounded-md bg-red-500/10 p-3 text-sm ${isDark ? 'text-red-300' : 'text-red-600'}`}>
+            {error}
+          </p>
+        ) : null}
+        <Button className="mt-6 w-full" type="submit" disabled={loading}>
+          {loading ? 'Signing in...' : 'Login'}
+        </Button>
       </form>
       </div>
     </main>

@@ -195,12 +195,10 @@ export default function PublicHome({ theme, setTheme }) {
                   </ul>
                 </div>
                 <a
-                  href="https://kahunas.io/coach/packages/list/a13e6be5-d737-47e0-b37e-8e8efbcf2c4c"
-                  target="_blank"
-                  rel="noreferrer"
+                  href="#contact"
                   className={`mt-6 inline-block rounded-xl px-5 py-3 text-center text-sm ${isDark ? 'bg-white text-slate-950' : 'bg-black text-white hover:bg-gray-900'} ${focusRing}`}
                 >
-                  Book 1:1 on Kahunas
+                  Apply for 1:1 Coaching
                 </a>
               </article>
 

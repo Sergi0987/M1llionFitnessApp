@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import ThemeToggle from './components/ThemeToggle.jsx';
 import { clearSession, getSession } from './services/api.js';
+import AccountSettings from './pages/AccountSettings.jsx';
 import AdminClients from './pages/AdminClients.jsx';
 import AdminClientDetails from './pages/AdminClientDetails.jsx';
 import AdminDashboard from './pages/AdminDashboard.jsx';
@@ -51,6 +52,9 @@ function Shell({ children, role, theme, setTheme }) {
                 <Link className={`rounded-md border px-4 py-2 text-sm font-semibold ${isDark ? 'border-slate-700' : 'border-slate-300'}`} to="/admin/programs">
                   Programs
                 </Link>
+                <Link className={`rounded-md border px-4 py-2 text-sm font-semibold ${isDark ? 'border-slate-700' : 'border-slate-300'}`} to="/admin/account">
+                  Account
+                </Link>
               </>
             ) : (
               <>
@@ -59,6 +63,9 @@ function Shell({ children, role, theme, setTheme }) {
                 </Link>
                 <Link className={`rounded-md border px-4 py-2 text-sm font-semibold ${isDark ? 'border-slate-700' : 'border-slate-300'}`} to="/app/workouts">
                   Workouts
+                </Link>
+                <Link className={`rounded-md border px-4 py-2 text-sm font-semibold ${isDark ? 'border-slate-700' : 'border-slate-300'}`} to="/app/account">
+                  Account
                 </Link>
               </>
             )}
@@ -103,8 +110,10 @@ export default function App() {
       <Route path="/admin/clients" element={<Protected role="admin" theme={theme} setTheme={setTheme}><AdminClients theme={theme} /></Protected>} />
       <Route path="/admin/clients/:id" element={<Protected role="admin" theme={theme} setTheme={setTheme}><AdminClientDetails theme={theme} /></Protected>} />
       <Route path="/admin/programs" element={<Protected role="admin" theme={theme} setTheme={setTheme}><AdminPrograms theme={theme} /></Protected>} />
+      <Route path="/admin/account" element={<Protected role="admin" theme={theme} setTheme={setTheme}><AccountSettings theme={theme} /></Protected>} />
       <Route path="/app" element={<Protected role="client" theme={theme} setTheme={setTheme}><ClientPortal theme={theme} /></Protected>} />
       <Route path="/app/workouts" element={<Protected role="client" theme={theme} setTheme={setTheme}><ClientWorkouts theme={theme} /></Protected>} />
+      <Route path="/app/account" element={<Protected role="client" theme={theme} setTheme={setTheme}><AccountSettings theme={theme} /></Protected>} />
     </Routes>
   );
 }

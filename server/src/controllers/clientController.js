@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import { pool, query } from '../config/db.js';
+import { validateCheckinPhoto } from './portalController.js';
 
 const statuses = ['Active', 'Paused', 'Completed'];
 
@@ -24,8 +25,8 @@ function validateClient(client, requirePassword = false) {
     return 'Status must be Active, Paused, or Completed.';
   }
 
-  if (requirePassword && (!client.password || client.password.length < 6)) {
-    return 'Client password must be at least 6 characters.';
+  if (requirePassword && (!client.password || client.password.length < 8)) {
+    return 'Client password must be at least 8 characters.';
   }
 
   return null;
@@ -209,21 +210,58 @@ export async function deleteClient(req, res, next) {
   }
 }
 
+export async function resetClientPassword(req, res, next) {
+  try {
+    const newPassword = req.body.password;
+
+    if (!newPassword || newPassword.length < 8) {
+      return res.status(400).json({ message: 'New password must be at least 8 characters.' });
+    }
+
+    const clientResult = await query('SELECT id, user_id FROM clients WHERE id = $1', [req.params.id]);
+
+    if (clientResult.rows.length === 0) {
+      return res.status(404).json({ message: 'Client not found.' });
+    }
+
+    if (!clientResult.rows[0].user_id) {
+      return res.status(400).json({ message: 'This client does not have a login account.' });
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, 12);
+    await query(`UPDATE users SET password = $1 WHERE id = $2 AND role = 'client'`, [
+      passwordHash,
+      clientResult.rows[0].user_id,
+    ]);
+
+    res.json({ message: 'Client password has been reset.' });
+  } catch (error) {
+    next(error);
+  }
+}
+
 export async function addCheckin(req, res, next) {
   try {
     const weight = Number(req.body.weight);
     const notes = req.body.notes?.trim();
     const progressRating = Number(req.body.progress_rating);
+    const photo = req.body.photo || null;
 
     if (!weight || weight <= 0 || !notes || progressRating < 1 || progressRating > 10) {
       return res.status(400).json({ message: 'Valid weight, notes, and rating from 1-10 are required.' });
     }
 
+    const photoError = validateCheckinPhoto(photo);
+
+    if (photoError) {
+      return res.status(400).json({ message: photoError });
+    }
+
     const result = await query(
-      `INSERT INTO checkins (client_id, weight, notes, progress_rating)
-       VALUES ($1, $2, $3, $4)
+      `INSERT INTO checkins (client_id, weight, notes, progress_rating, photo)
+       VALUES ($1, $2, $3, $4, $5)
        RETURNING *`,
-      [req.params.id, weight, notes, progressRating],
+      [req.params.id, weight, notes, progressRating, photo],
     );
 
     res.status(201).json(result.rows[0]);

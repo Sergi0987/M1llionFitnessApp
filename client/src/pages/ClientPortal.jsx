@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Badge from '../components/Badge.jsx';
 import Button from '../components/Button.jsx';
+import WeightChart from '../components/WeightChart.jsx';
 import { portalApi } from '../services/api.js';
 import { formatDate } from '../utils/formatDate.js';
+import { compressImage } from '../utils/image.js';
 import { getThemeClasses } from '../utils/themeClasses.js';
 
 export default function ClientPortal({ theme }) {
@@ -12,7 +14,10 @@ export default function ClientPortal({ theme }) {
     notes: '',
     progress_rating: 7,
   });
+  const [photo, setPhoto] = useState(null);
   const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
+  const photoInputRef = useRef(null);
   const classes = getThemeClasses(theme);
 
   async function load() {
@@ -23,23 +28,49 @@ export default function ClientPortal({ theme }) {
     load().catch((err) => setError(err.message));
   }, []);
 
+  async function handlePhotoChange(event) {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      setPhoto(null);
+      return;
+    }
+
+    try {
+      setError('');
+      setPhoto(await compressImage(file));
+    } catch (err) {
+      setError(err.message);
+      setPhoto(null);
+      event.target.value = '';
+    }
+  }
+
   async function addCheckin(event) {
     event.preventDefault();
 
     try {
       setError('');
+      setSaving(true);
 
-      await portalApi.addCheckin(form);
+      await portalApi.addCheckin({ ...form, photo });
 
       setForm({
         weight: '',
         notes: '',
         progress_rating: 7,
       });
+      setPhoto(null);
+
+      if (photoInputRef.current) {
+        photoInputRef.current.value = '';
+      }
 
       await load();
     } catch (err) {
       setError(err.message);
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -176,8 +207,30 @@ export default function ClientPortal({ theme }) {
             />
           </label>
 
-          <Button className="w-full sm:w-auto" type="submit">
-            Submit Check-in
+          <label className="block">
+            <span className={`mb-2 block text-sm font-semibold ${classes.muted}`}>
+              Progress photo (optional)
+            </span>
+
+            <input
+              ref={photoInputRef}
+              className={`w-full rounded-xl border px-4 py-2.5 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-pink-500 file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-white ${classes.input}`}
+              type="file"
+              accept="image/*"
+              onChange={handlePhotoChange}
+            />
+          </label>
+
+          {photo ? (
+            <img
+              src={photo}
+              alt="Progress preview"
+              className="max-h-40 rounded-xl object-cover"
+            />
+          ) : null}
+
+          <Button className="w-full sm:w-auto" type="submit" disabled={saving}>
+            {saving ? 'Submitting...' : 'Submit Check-in'}
           </Button>
         </form>
 
@@ -255,6 +308,16 @@ export default function ClientPortal({ theme }) {
       <div
         className={`mt-6 rounded-2xl border p-4 sm:mt-8 sm:p-6 ${classes.panel}`}
       >
+        <h2 className="text-lg font-bold sm:text-xl">Weight trend</h2>
+
+        <div className="mt-4">
+          <WeightChart checkins={data.checkins} theme={theme} />
+        </div>
+      </div>
+
+      <div
+        className={`mt-6 rounded-2xl border p-4 sm:mt-8 sm:p-6 ${classes.panel}`}
+      >
         <h2 className="text-lg font-bold sm:text-xl">Recent check-ins</h2>
 
         <div className="mt-4 space-y-3">
@@ -281,6 +344,15 @@ export default function ClientPortal({ theme }) {
                 >
                   {checkin.notes}
                 </p>
+
+                {checkin.photo ? (
+                  <img
+                    src={checkin.photo}
+                    alt={`Progress photo from ${formatDate(checkin.created_at)}`}
+                    className="mt-3 max-h-48 rounded-lg object-cover"
+                    loading="lazy"
+                  />
+                ) : null}
               </article>
             ))
           ) : (
