@@ -65,12 +65,29 @@ export async function getPortal(req, res, next) {
   }
 }
 
+export function validateCheckinPhoto(photo) {
+  if (!photo) {
+    return null;
+  }
+
+  if (typeof photo !== 'string' || !photo.startsWith('data:image/')) {
+    return 'Photo must be an image.';
+  }
+
+  if (photo.length > 3_000_000) {
+    return 'Photo is too large. Please use a smaller image.';
+  }
+
+  return null;
+}
+
 export async function createPortalCheckin(req, res, next) {
   try {
     const client = await getClientForUser(req.user.id);
     const weight = Number(req.body.weight);
     const notes = req.body.notes?.trim();
     const progressRating = Number(req.body.progress_rating);
+    const photo = req.body.photo || null;
 
     if (!client) {
       return res.status(404).json({ message: 'Client profile not found.' });
@@ -80,9 +97,15 @@ export async function createPortalCheckin(req, res, next) {
       return res.status(400).json({ message: 'Valid weight, notes, and rating from 1-10 are required.' });
     }
 
+    const photoError = validateCheckinPhoto(photo);
+
+    if (photoError) {
+      return res.status(400).json({ message: photoError });
+    }
+
     const result = await query(
-      'INSERT INTO checkins (client_id, weight, notes, progress_rating) VALUES ($1, $2, $3, $4) RETURNING *',
-      [client.id, weight, notes, progressRating],
+      'INSERT INTO checkins (client_id, weight, notes, progress_rating, photo) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [client.id, weight, notes, progressRating, photo],
     );
 
     res.status(201).json(result.rows[0]);

@@ -43,6 +43,39 @@ export async function login(req, res, next) {
   }
 }
 
+export async function changePassword(req, res, next) {
+  try {
+    const currentPassword = req.body.current_password;
+    const newPassword = req.body.new_password;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: 'Current password and new password are required.' });
+    }
+
+    if (newPassword.length < 8) {
+      return res.status(400).json({ message: 'New password must be at least 8 characters.' });
+    }
+
+    if (newPassword === currentPassword) {
+      return res.status(400).json({ message: 'New password must be different from your current password.' });
+    }
+
+    const result = await query('SELECT id, password FROM users WHERE id = $1', [req.user.id]);
+    const user = result.rows[0];
+
+    if (!user || !(await bcrypt.compare(currentPassword, user.password))) {
+      return res.status(401).json({ message: 'Current password is incorrect.' });
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, 12);
+    await query('UPDATE users SET password = $1 WHERE id = $2', [passwordHash, user.id]);
+
+    res.json({ message: 'Password updated successfully.' });
+  } catch (error) {
+    next(error);
+  }
+}
+
 export async function me(req, res, next) {
   try {
     let client = null;

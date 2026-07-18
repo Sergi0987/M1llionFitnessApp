@@ -42,6 +42,11 @@ export const authApi = {
       method: 'POST',
       body: JSON.stringify(payload),
     }),
+  changePassword: (payload) =>
+    apiRequest('/auth/change-password', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
 };
 
 export const adminApi = {
@@ -60,6 +65,11 @@ export const adminApi = {
   deleteClient: (id) =>
     apiRequest(`/admin/clients/${id}`, {
       method: 'DELETE',
+    }),
+  resetClientPassword: (id, password) =>
+    apiRequest(`/admin/clients/${id}/password`, {
+      method: 'PUT',
+      body: JSON.stringify({ password }),
     }),
   addCheckin: (id, payload) =>
     apiRequest(`/admin/clients/${id}/checkins`, {
