@@ -260,6 +260,16 @@ export default function PublicHome({ theme, setTheme }) {
           </div>
 
           <div className="m1-grain m1-grain-light relative mx-auto flex min-h-[max(34rem,88svh)] max-w-[86rem] flex-col justify-end px-5 pb-10 pt-16 sm:px-8 sm:pb-14 sm:pt-24">
+            {/* Registration marks — the plate's own corner furniture, holding the
+                top of the sheet without putting a label above the headline. */}
+            <div aria-hidden="true" className="pointer-events-none absolute left-5 top-8 sm:left-8 sm:top-12">
+              <span className="absolute h-px w-8 bg-bone/45" />
+              <span className="absolute h-8 w-px bg-bone/45" />
+            </div>
+            <div aria-hidden="true" className="pointer-events-none absolute right-5 top-8 sm:right-8 sm:top-12">
+              <span className="absolute right-0 h-px w-8 bg-bone/45" />
+              <span className="absolute right-0 h-8 w-px bg-bone/45" />
+            </div>
             <div className="max-w-4xl py-14 sm:py-20">
               <h1 className="font-display text-[clamp(2.6rem,9vw,6rem)] uppercase leading-[0.92] tracking-[-0.005em]">
                 Strength is
@@ -279,14 +289,14 @@ export default function PublicHome({ theme, setTheme }) {
               <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
                 <a
                   href="#inquire"
-                  className={`inline-flex items-center justify-center gap-3 bg-bone px-8 py-4 text-[0.7rem] uppercase tracking-[0.2em] text-charcoal transition-colors hover:bg-butter ${focusRing}`}
+                  className={`inline-flex items-center justify-center gap-3 bg-bone px-8 py-4 text-[0.72rem] uppercase tracking-[0.2em] text-charcoal transition-colors hover:bg-butter ${ringDark}`}
                 >
                   Apply for coaching
                   <span aria-hidden="true">→</span>
                 </a>
                 <Link
                   to="/login"
-                  className={`inline-flex items-center justify-center border border-bone/35 px-8 py-4 text-[0.7rem] uppercase tracking-[0.2em] text-bone transition-colors hover:border-bone ${focusRing}`}
+                  className={`inline-flex items-center justify-center border border-bone/35 px-8 py-4 text-[0.72rem] uppercase tracking-[0.2em] text-bone transition-colors hover:border-bone ${ringDark}`}
                 >
                   Client portal
                 </Link>
@@ -546,7 +556,7 @@ export default function PublicHome({ theme, setTheme }) {
                       type={field.type}
                       autoComplete={field.autoComplete}
                       required={field.required}
-                      className={`mt-2 w-full border-b border-bone/30 bg-transparent pb-2.5 text-[1.05rem] text-bone outline-none transition-colors focus:border-butter ${focusRing}`}
+                      className={`mt-2 w-full border-b border-bone/30 bg-transparent pb-2.5 text-[1.05rem] text-bone outline-none transition-colors focus:border-butter ${ringDark}`}
                     />
                   </label>
                 ))}
@@ -556,14 +566,14 @@ export default function PublicHome({ theme, setTheme }) {
                   <textarea
                     name="message"
                     rows={4}
-                    className={`mt-2 w-full resize-y border-b border-bone/30 bg-transparent pb-2.5 text-[1.05rem] text-bone outline-none transition-colors focus:border-butter ${focusRing}`}
+                    className={`mt-2 w-full resize-y border-b border-bone/30 bg-transparent pb-2.5 text-[1.05rem] text-bone outline-none transition-colors focus:border-butter ${ringDark}`}
                   />
                 </label>
 
                 <button
                   type="submit"
                   disabled={formState === 'sending'}
-                  className={`mt-1 inline-flex items-center justify-center gap-3 bg-bone px-8 py-4 text-[0.72rem] uppercase tracking-[0.2em] text-charcoal transition-colors hover:bg-butter disabled:cursor-not-allowed disabled:opacity-70 ${focusRing}`}
+                  className={`mt-1 inline-flex items-center justify-center gap-3 bg-bone px-8 py-4 text-[0.72rem] uppercase tracking-[0.2em] text-charcoal transition-colors hover:bg-butter disabled:cursor-not-allowed disabled:opacity-70 ${ringDark}`}
                 >
                   {formState === 'sending' ? 'Sending…' : 'Send inquiry'}
                   {formState === 'sending' ? null : <span aria-hidden="true">→</span>}
@@ -573,7 +583,7 @@ export default function PublicHome({ theme, setTheme }) {
                   {formState === 'sent'
                     ? 'Sent. Your inquiry is with Carolina.'
                     : formState === 'error'
-                      ? 'That did not send. Email carolina directly, or try again in a moment.'
+                      ? 'That did not send. Try again, or reach Carolina on Instagram.'
                       : 'Your inquiry goes straight to Carolina.'}
                 </p>
               </form>

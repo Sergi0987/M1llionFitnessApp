@@ -32,3 +32,85 @@ textarea:-webkit-autofill:focus {
   box-shadow: 0 0 0 1000px #ffffff inset;
   transition: background-color 9999s ease-in-out 0s;
 }
+
+/* ---------------------------------------------------------------------------
+   M1LLION public site — plate mechanics.
+   Scoped to the marketing page; the portal keeps its own typography.
+   --------------------------------------------------------------------------- */
+
+.m1 {
+  font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+}
+
+/* Fine paper grain. The brand bible asks for 10-20% paper texture over flat
+   fields so the page reads as printed rather than rendered. */
+.m1-grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.14;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.m1-grain-light::after {
+  mix-blend-mode: screen;
+  opacity: 0.07;
+}
+
+/* Matte film finish: contrast -18, saturation -12, warmth +7 per the bible. */
+.m1-photo {
+  filter: saturate(0.86) contrast(0.93) sepia(0.09) brightness(1.02);
+}
+
+/* One authored moment: the study's callouts key themselves to the legend as
+   the plate enters view. Content is visible by default and stays visible when
+   JS never runs or motion is reduced. */
+.m1-key {
+  opacity: 1;
+}
+
+.m1-armed .m1-key {
+  opacity: 0;
+  transform: translateY(0.4rem);
+}
+
+.m1-armed.m1-drawn .m1-key {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: calc(var(--key-index, 0) * 90ms);
+}
+
+.m1-armed .m1-leader {
+  transform: scaleX(0);
+}
+
+.m1-armed.m1-drawn .m1-leader {
+  transform: scaleX(1);
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: calc(var(--key-index, 0) * 90ms);
+}
+
+.m1-leader {
+  transform-origin: left center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .m1-armed .m1-key,
+  .m1-armed.m1-drawn .m1-key {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .m1-armed .m1-leader,
+  .m1-armed.m1-drawn .m1-leader {
+    transform: scaleX(1);
+    transition: none;
+  }
+}
