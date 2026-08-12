@@ -1,19 +1,63 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import ThemeToggle from '../components/ThemeToggle.jsx';
+import Plate from '../components/Plate.jsx';
+import PlateStudy from '../components/PlateStudy.jsx';
 
-const focusRing =
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black focus-visible:ring-offset-2';
+// Focus has to clear 3:1 against whichever ground it lands on, so the ring is
+// picked per theme rather than shared.
+const ringLight =
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-charcoal focus-visible:ring-offset-bone';
+const ringDark =
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-butter focus-visible:ring-offset-charcoal';
+
+const NAV = [
+  ['#coaching', 'Coaching'],
+  ['#coach', 'The Coach'],
+  ['#instagram', 'Feed'],
+  ['#inquire', 'Inquire'],
+];
+
+// The legend for Plate II. Numbers key to the marginal ticks on the figure.
+const ONE_TO_ONE = [
+  ['Programming', 'Training built around your schedule, equipment, and history — not a template with your name on it.'],
+  ['Nutrition', 'Macros set against how you actually eat, reviewed as your training load changes.'],
+  ['Weekly check-in', 'Weight, notes, and progress photos logged in the portal. Read every week, answered every week.'],
+  ['Form review', 'Send video. Get correction on the lifts that carry the most risk and the most return.'],
+  ['The portal', 'Your program, history, and check-ins in one private login — not scattered across a chat thread.'],
+];
+
+const CLASSES = [
+  ['Strength and conditioning', 'Barbell and conditioning work programmed for a room, scaled to the person.'],
+  ['A women-focused room', 'Built to be supportive without being soft on the work.'],
+  ['Single sessions or packs', 'Come once or commit to a block.'],
+];
 
 export default function PublicHome({ theme, setTheme }) {
   const year = new Date().getFullYear();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [heroSrc, setHeroSrc] = useState('/editorial-01.jpg');
+  const [studySrc, setStudySrc] = useState('/editorial-02.jpg');
+  const [feedArmed, setFeedArmed] = useState(false);
   const mobileNavRef = useRef(null);
   const mobileBtnRef = useRef(null);
+  const feedRef = useRef(null);
+  const [interest, setInterest] = useState('1:1 coaching');
+  const [formState, setFormState] = useState('idle');
   const isDark = theme === 'dark';
+  const focusRing = isDark ? ringDark : ringLight;
 
   const logo = isDark ? '/logoWhite.png' : '/logoBlack.png';
 
+  // Ground / ink pairs. Light is bone paper, dark is the charcoal plate.
+  const ground = isDark ? 'bg-charcoal text-bone' : 'bg-bone text-charcoal';
+  const ink = isDark ? 'text-bone' : 'text-charcoal';
+  // Olive and sage are accents — they carry numbering, captions, and labels.
+  // Running copy stays on a neutral so the 5-10% accent budget holds.
+  const inkSoft = isDark ? 'text-sage' : 'text-olive';
+  const inkBody = isDark ? 'text-sand' : 'text-graphite';
+  const rule = isDark ? 'border-bone/25' : 'border-charcoal/20';
+  const ruleFaint = isDark ? 'border-bone/12' : 'border-charcoal/10';
 
   useEffect(() => {
     if (!mobileNavOpen) {
@@ -48,7 +92,39 @@ export default function PublicHome({ theme, setTheme }) {
     };
   }, [mobileNavOpen]);
 
+  // The Instagram widget is third-party and heavy; it only loads once the reader
+  // has actually reached the feed.
   useEffect(() => {
+    const node = feedRef.current;
+
+    if (!node || feedArmed) {
+      return undefined;
+    }
+
+    if (typeof IntersectionObserver === 'undefined') {
+      setFeedArmed(true);
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setFeedArmed(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '400px' },
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [feedArmed]);
+
+  useEffect(() => {
+    if (!feedArmed) {
+      return;
+    }
+
     const scriptId = 'elfsight-platform-script';
 
     if (document.getElementById(scriptId)) {
@@ -60,59 +136,81 @@ export default function PublicHome({ theme, setTheme }) {
     script.src = 'https://elfsightcdn.com/platform.js';
     script.async = true;
     document.body.appendChild(script);
-  }, []);
+  }, [feedArmed]);
 
   function closeMobileNav() {
     setMobileNavOpen(false);
   }
 
+  async function submitInquiry(event) {
+    event.preventDefault();
+
+    const form = event.currentTarget;
+    setFormState('sending');
+
+    try {
+      const response = await fetch('https://formspree.io/f/xzzjagqp', {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { Accept: 'application/json' },
+      });
+
+      if (!response.ok) {
+        throw new Error('Formspree rejected the submission');
+      }
+
+      form.reset();
+      setFormState('sent');
+    } catch {
+      setFormState('error');
+    }
+  }
+
   return (
-    <div className={`min-h-screen px-4 sm:px-6 ${
-        isDark
-          ? 'bg-slate-950 text-white'
-          : 'bg-white text-slate-950'
-      }`}>
+    <div className={`m1 min-h-screen ${ground}`}>
       <a
         href="#main"
-        className={`sr-only fixed left-3 top-3 z-[9999] rounded-xl border bg-white px-4 py-2 shadow focus:not-sr-only ${focusRing}`}
+        className={`sr-only fixed left-4 top-4 z-[9999] border px-4 py-2 text-xs uppercase tracking-[0.18em] focus:not-sr-only ${rule} ${
+          isDark ? 'bg-charcoal' : 'bg-bone'
+        } ${focusRing}`}
       >
         Skip to content
       </a>
 
-      <header className={`sticky top-0 z-50 border-b backdrop-blur ${isDark ? 'border-white/10 bg-slate-950/90' : 'bg-white/90'}`}>
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
-          <a href="#top" className={`flex items-center ${focusRing}`} aria-label="M1llion Fitness home">
-            <img src={logo} alt="M1llion Fitness" className="h-10 w-auto md:h-12" />
+      <header
+        className={`sticky top-0 z-50 border-b ${rule} ${
+          isDark ? 'bg-charcoal/95' : 'bg-bone/95'
+        } backdrop-blur-[2px]`}
+      >
+        <div className="mx-auto flex max-w-[86rem] items-center justify-between gap-6 px-5 py-3.5 sm:px-8">
+          <a href="#top" className={`flex items-center ${focusRing}`} aria-label="M1LLION home">
+            <img src={logo} alt="M1LLION" className="h-7 w-auto md:h-8" />
           </a>
 
-          <nav aria-label="Primary" className="hidden items-center gap-8 text-sm font-medium md:flex">
-            <a href="#coaching" className={`hover:opacity-70 ${focusRing}`}>
-              Coaching
-            </a>
-            <a href="#about" className={`hover:opacity-70 ${focusRing}`}>
-              About
-            </a>
-            <a href="#instagram" className={`hover:opacity-70 ${focusRing}`}>
-              Instagram
-            </a>
-            <a href="#contact" className={`hover:opacity-70 ${focusRing}`}>
-              Contact
-            </a>
-            <Link to="/login" className={`hover:opacity-70 ${focusRing}`}>
-              Login
+          <nav
+            aria-label="Primary"
+            className="hidden items-center gap-9 text-[0.68rem] uppercase tracking-[0.2em] md:flex"
+          >
+            {NAV.map(([href, label]) => (
+              <a key={href} href={href} className={`transition-colors hover:text-olive ${focusRing}`}>
+                {label}
+              </a>
+            ))}
+            <Link to="/login" className={`transition-colors hover:text-olive ${focusRing}`}>
+              Portal
             </Link>
-            <ThemeToggle theme={theme} setTheme={setTheme} />
+            <ThemeToggle theme={theme} setTheme={setTheme} variant="plate" />
           </nav>
 
           <button
             ref={mobileBtnRef}
             type="button"
-            className={`inline-flex items-center justify-center rounded-xl border px-3 py-2 text-sm font-medium md:hidden ${focusRing}`}
+            className={`border px-3 py-1.5 text-[0.68rem] uppercase tracking-[0.2em] md:hidden ${rule} ${focusRing}`}
             aria-expanded={mobileNavOpen}
             aria-controls="mobile-nav"
             onClick={() => setMobileNavOpen((value) => !value)}
           >
-            Menu
+            {mobileNavOpen ? 'Close' : 'Index'}
           </button>
         </div>
 
@@ -120,189 +218,393 @@ export default function PublicHome({ theme, setTheme }) {
           id="mobile-nav"
           ref={mobileNavRef}
           aria-label="Mobile primary"
-          className={`border-t md:hidden ${isDark ? 'border-white/10 bg-slate-950' : 'bg-white'} ${mobileNavOpen ? 'block' : 'hidden'}`}
+          className={`border-t md:hidden ${rule} ${isDark ? 'bg-charcoal' : 'bg-bone'} ${
+            mobileNavOpen ? 'block' : 'hidden'
+          }`}
         >
-          <div className="mx-auto grid max-w-6xl gap-2 px-4 py-3 text-sm font-medium">
-            {[
-              ['#coaching', 'Coaching'],
-              ['#about', 'About'],
-              ['#instagram', 'Instagram'],
-              ['#contact', 'Contact'],
-            ].map(([href, label]) => (
-              <a key={href} href={href} onClick={closeMobileNav} className={`py-2 ${focusRing}`}>
+          <div className="mx-auto grid max-w-[86rem] px-5 py-2 text-[0.72rem] uppercase tracking-[0.2em] sm:px-8">
+            {NAV.map(([href, label]) => (
+              <a
+                key={href}
+                href={href}
+                onClick={closeMobileNav}
+                className={`border-b py-3 ${ruleFaint} ${focusRing}`}
+              >
                 {label}
               </a>
             ))}
-            <Link to="/login" onClick={closeMobileNav} className={`py-2 ${focusRing}`}>
-              Login
+            <Link to="/login" onClick={closeMobileNav} className={`border-b py-3 ${ruleFaint} ${focusRing}`}>
+              Portal
             </Link>
-            <ThemeToggle theme={theme} setTheme={setTheme} />
+            <div className="py-3">
+              <ThemeToggle theme={theme} setTheme={setTheme} variant="plate" />
+            </div>
           </div>
         </nav>
       </header>
 
       <main id="main">
-        <section id="top" className="scroll-mt-24 px-4 py-14 md:py-20">
-          <div className="mx-auto grid max-w-6xl gap-10 md:grid-cols-2 md:items-center md:gap-12">
-            <div className="order-1 md:order-2">
-              <div className="mx-auto aspect-[4/3] w-full max-w-sm overflow-hidden rounded-2xl bg-slate-100 sm:max-w-md md:max-w-none">
-                <img
-                  src="/C14.jpeg"
-                  alt="Carolina in the gym"
-                  className="h-full w-full object-cover object-[center_24%]"
-                />
+        {/* ---------------------------------------------------------------
+            Frontispiece
+            --------------------------------------------------------------- */}
+        <section id="top" className="relative isolate overflow-hidden bg-charcoal text-bone">
+          <div className="absolute inset-0">
+            <img
+              src={heroSrc}
+              onError={() => setHeroSrc('/C14.jpeg')}
+              alt="Carolina training"
+              className="m1-photo h-full w-full object-cover object-[center_28%] opacity-70"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-charcoal/85 via-charcoal/55 to-charcoal" />
+            <div className="absolute inset-0 bg-gradient-to-r from-charcoal/90 via-charcoal/30 to-transparent" />
+          </div>
+
+          <div className="m1-grain m1-grain-light relative mx-auto flex min-h-[max(34rem,88svh)] max-w-[86rem] flex-col justify-end px-5 pb-10 pt-16 sm:px-8 sm:pb-14 sm:pt-24">
+            <div className="max-w-4xl py-14 sm:py-20">
+              <h1 className="font-display text-[clamp(2.6rem,9vw,6rem)] uppercase leading-[0.92] tracking-[-0.005em]">
+                Strength is
+                <br />
+                stewardship
+              </h1>
+
+              <p className="mt-7 max-w-[46ch] font-serif text-[clamp(1.25rem,2.5vw,1.75rem)] font-light italic leading-[1.45] text-sand">
+                Train the body. Renew the mind. Serve the King.
+              </p>
+
+              <p className="mt-6 max-w-[62ch] text-[0.95rem] leading-[1.75] text-sage">
+                One-to-one online coaching and group classes with Carolina — programming, nutrition, and weekly
+                review delivered through a private client portal.
+              </p>
+
+              <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+                <a
+                  href="#inquire"
+                  className={`inline-flex items-center justify-center gap-3 bg-bone px-8 py-4 text-[0.7rem] uppercase tracking-[0.2em] text-charcoal transition-colors hover:bg-butter ${focusRing}`}
+                >
+                  Apply for coaching
+                  <span aria-hidden="true">→</span>
+                </a>
+                <Link
+                  to="/login"
+                  className={`inline-flex items-center justify-center border border-bone/35 px-8 py-4 text-[0.7rem] uppercase tracking-[0.2em] text-bone transition-colors hover:border-bone ${focusRing}`}
+                >
+                  Client portal
+                </Link>
               </div>
             </div>
 
-            <div className="order-2 text-center md:order-1 md:text-left">
-              <h1 className="text-3xl font-extrabold leading-tight sm:text-4xl md:text-5xl">
-                Train with Confidence. Wear with Purpose.
-              </h1>
-              <p className={`mt-4 text-lg ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-                Programs that get results and apparel built for the grind.
-              </p>
-              <div className="mt-6 flex flex-col justify-center gap-4 sm:flex-row md:justify-start">
-                <a href="#coaching" className={`rounded-xl px-6 py-3 ${isDark ? 'bg-white text-slate-950' : 'bg-black text-white'} ${focusRing}`}>
-                  Start Coaching
-                </a>
-                <Link to="/login" className={`rounded-xl border px-6 py-3 ${isDark ? 'border-white/20' : ''} ${focusRing}`}>
-                  Client Portal
-                </Link>
-              </div>
+            <div className={`flex items-end justify-between gap-6 border-t border-bone/20 pt-4`}>
+              <p className="text-[0.62rem] uppercase tracking-[0.28em] text-sage">From one to many</p>
+              <p className="font-serif text-sm italic text-sand">Pl. I — Frontispiece</p>
             </div>
           </div>
         </section>
 
-        <section id="coaching" className={`scroll-mt-24 border-y ${isDark ? 'border-white/10 bg-slate-900' : 'bg-slate-50'}`}>
-          <div className="mx-auto max-w-6xl space-y-8 px-4 py-14">
-            <h2 className="text-center text-3xl font-bold md:text-left">Coaching</h2>
-            <p className={`max-w-2xl text-center text-sm md:text-left md:text-base ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-              Whether you want fully personalized 1:1 support or to train in a group setting,
-              you can work with Carolina in the way that fits your life best.
-            </p>
+        {/* ---------------------------------------------------------------
+            Plate II — the study
+            --------------------------------------------------------------- */}
+        <Plate
+          id="coaching"
+          plate="Pl. II"
+          caption="The study"
+          heading="What one-to-one actually includes"
+          isDark={isDark}
+        >
+          <p className={`max-w-[66ch] font-serif text-[clamp(1.15rem,2vw,1.5rem)] font-light leading-[1.55] ${ink}`}>
+            Coaching is not a plan you are handed and left with. It is a structure you are held to, reviewed every
+            week, and corrected as your body and your week change.
+          </p>
 
-            <div className="grid gap-6 md:grid-cols-2">
-              <article className={`flex flex-col justify-between rounded-2xl border p-6 shadow-sm ${isDark ? 'border-white/10 bg-slate-950' : 'bg-white'}`}>
-                <div>
-                  <h3 className="text-xl font-semibold">1:1 Online Coaching</h3>
-                  <p className={`mt-2 text-sm ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-                    Custom training plans, macros, and weekly check-ins delivered through a private client portal.
-                  </p>
-                  <ul className={`mt-4 list-disc space-y-1 pl-5 text-sm ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
-                    <li>Personalized training and nutrition</li>
-                    <li>Weekly check-ins and form feedback</li>
-                    <li>Habit tracking and performance focus</li>
-                  </ul>
-                </div>
-                <a
-                  href="#contact"
-                  className={`mt-6 inline-block rounded-xl px-5 py-3 text-center text-sm ${isDark ? 'bg-white text-slate-950' : 'bg-black text-white hover:bg-gray-900'} ${focusRing}`}
-                >
-                  Apply for 1:1 Coaching
-                </a>
-              </article>
+          <div className="mt-12">
+            <PlateStudy
+              src={studySrc}
+              onError={() => setStudySrc('/C14.jpeg')}
+              alt="Strength work in progress"
+              figure="Fig. 1 — 1:1 Online Coaching"
+              items={ONE_TO_ONE}
+              isDark={isDark}
+              ctaHref="#inquire"
+              ctaLabel="Apply for 1:1 coaching"
+            />
+          </div>
 
-              <article className={`flex flex-col justify-between rounded-2xl border p-6 shadow-sm ${isDark ? 'border-white/10 bg-slate-950' : 'bg-white'}`}>
-                <div>
-                  <h3 className="text-xl font-semibold">Group Classes</h3>
-                  <p className={`mt-2 text-sm ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-                    High-energy classes designed to push you, support you, and make training fun.
-                  </p>
-                  <ul className={`mt-4 list-disc space-y-1 pl-5 text-sm ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
-                    <li>Strength and conditioning style workouts</li>
-                    <li>Supportive, women-focused environment</li>
-                    <li>Book single sessions or packs</li>
-                  </ul>
-                </div>
+          <div className={`mt-16 border-t pt-10 ${rule}`}>
+            <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] lg:gap-14">
+              <div>
+                <h3 className={`font-display text-[clamp(1.6rem,3.5vw,2.5rem)] uppercase leading-[1] ${ink}`}>
+                  Group classes
+                </h3>
+                <p className={`mt-4 font-serif text-lg italic ${inkSoft}`}>Fig. 2 — In the room</p>
+              </div>
+
+              <div>
+                <dl>
+                  {CLASSES.map(([term, detail]) => (
+                    <div key={term} className={`border-t py-4 first:border-t-0 first:pt-0 ${ruleFaint}`}>
+                      <dt className={`text-[0.74rem] uppercase tracking-[0.2em] ${ink}`}>{term}</dt>
+                      <dd className={`mt-1.5 max-w-[52ch] text-[0.95rem] leading-[1.7] ${inkBody}`}>{detail}</dd>
+                    </div>
+                  ))}
+                </dl>
+
                 <a
                   href="https://m1llionfitness.setmore.com/"
                   target="_blank"
                   rel="noreferrer"
-                  className={`mt-6 inline-block rounded-xl px-5 py-3 text-center text-sm ${isDark ? 'bg-white text-slate-950' : 'bg-black text-white hover:bg-gray-900'} ${focusRing}`}
+                  className={`mt-7 inline-flex items-center gap-3 border px-8 py-4 text-[0.7rem] uppercase tracking-[0.2em] transition-colors ${rule} ${
+                    isDark ? 'hover:border-bone' : 'hover:border-charcoal'
+                  } ${focusRing}`}
                 >
-                  Book Classes on Setmore
+                  Book a class
+                  <span aria-hidden="true">↗</span>
                 </a>
-              </article>
-            </div>
-          </div>
-        </section>
-
-        <section id="about" className={`scroll-mt-24 border-y ${isDark ? 'border-white/10 bg-slate-900' : 'bg-slate-50'}`}>
-          <div className="mx-auto grid max-w-6xl items-stretch gap-10 px-4 py-14 md:grid-cols-2">
-            <div className="order-2 flex w-full justify-center md:order-1 md:justify-start">
-              <div className="min-h-[480px] w-full max-w-lg overflow-hidden rounded-2xl bg-black">
-                <img
-                  src="/headshot.png"
-                  alt="Carolina training clients in a gym"
-                  className="h-full w-full object-cover object-center"
-                  loading="lazy"
-                />
               </div>
             </div>
-            <div className="order-1 flex flex-col justify-center text-center md:order-2 md:text-left">
-              <h2 className="text-3xl font-bold">Meet Carolina</h2>
-              <p className={`mt-3 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
-                Certified trainer helping clients build strength and confidence, on and off the gym floor.
+          </div>
+        </Plate>
+
+        {/* ---------------------------------------------------------------
+            Commentary
+            --------------------------------------------------------------- */}
+        <section className="relative isolate overflow-hidden bg-forest text-bone">
+          <div className="m1-grain m1-grain-light relative mx-auto max-w-[86rem] px-5 py-20 sm:px-8 sm:py-28">
+            <div className="max-w-[54rem]">
+              <p className="font-serif text-[clamp(1.9rem,5vw,3.5rem)] font-light leading-[1.25]">
+                The body matters. The soul matters more.{' '}
+                <span className="text-butter">The order matters.</span>
+              </p>
+
+              <div className="mt-10 grid gap-8 border-t border-bone/25 pt-8 sm:grid-cols-2">
+                <p className="max-w-[46ch] text-[0.95rem] leading-[1.8] text-sage">
+                  Discipline here is not punishment and training is not vanity. The body is on loan, it is worth
+                  keeping well, and the work of keeping it well is worth doing carefully.
+                </p>
+                <p className="max-w-[46ch] text-[0.95rem] leading-[1.8] text-sage">
+                  That is the whole reason for the structure: programming that respects your limits, review that
+                  keeps you honest, and progress measured over seasons rather than weeks.
+                </p>
+              </div>
+
+              <p className="mt-10 text-[0.62rem] uppercase tracking-[0.34em] text-butter">
+                Work. Worship. Witness.
               </p>
             </div>
           </div>
         </section>
 
-        <section id="instagram" className={`scroll-mt-24 border-y ${isDark ? 'border-white/10 bg-slate-900' : 'bg-slate-50'}`}>
-          <div className="mx-auto max-w-6xl px-4 py-14">
-            <div className="mb-6 text-center md:text-left">
-              <h2 className="text-3xl font-bold">Instagram</h2>
-              <p className={`mt-1 text-sm md:text-base ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>Latest posts from Carolina&apos;s feed.</p>
+        {/* ---------------------------------------------------------------
+            Plate III — the coach
+            --------------------------------------------------------------- */}
+        <Plate id="coach" plate="Pl. III" caption="The coach" heading="Carolina" isDark={isDark}>
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16">
+            <figure className="relative">
+              <div className={`relative overflow-hidden border ${rule}`}>
+                <img
+                  src="/headshot.png"
+                  alt="Carolina coaching in the gym"
+                  loading="lazy"
+                  className="m1-photo aspect-[4/5] w-full object-cover object-center"
+                />
+              </div>
+              <figcaption className={`mt-3 font-serif text-sm italic ${inkSoft}`}>
+                Fig. 3 — Carolina, on the floor
+              </figcaption>
+            </figure>
+
+            <div className="lg:pt-2">
+              <p className={`max-w-[56ch] font-serif text-[clamp(1.15rem,2vw,1.5rem)] font-light leading-[1.55] ${ink}`}>
+                A certified trainer helping women build strength and confidence, on and off the gym floor.
+              </p>
+
+              <p className={`mt-6 max-w-[58ch] text-[0.95rem] leading-[1.8] ${inkBody}`}>
+                Carolina coaches the way she trains — attentive to detail, unhurried about results, and more
+                interested in what you can still do in twenty years than in what a single week looks like. Clients
+                work with her online through the portal or in person in class.
+              </p>
+
+              <dl className={`mt-9 border-t ${rule}`}>
+                {[
+                  ['Practice', 'Strength, conditioning, and nutrition coaching'],
+                  ['Format', '1:1 online and in-person group classes'],
+                  ['Focus', 'Longevity, technique, and habits that survive a real week'],
+                ].map(([term, detail]) => (
+                  <div key={term} className={`grid gap-1 border-b py-4 sm:grid-cols-[9rem_1fr] sm:gap-4 ${ruleFaint}`}>
+                    <dt className={`text-[0.68rem] uppercase tracking-[0.2em] ${inkSoft}`}>{term}</dt>
+                    <dd className={`text-[0.95rem] leading-[1.7] ${ink}`}>{detail}</dd>
+                  </div>
+                ))}
+              </dl>
             </div>
-            <div className={`overflow-hidden rounded-2xl shadow-sm ${isDark ? 'bg-slate-950' : 'bg-white'}`}>
+          </div>
+        </Plate>
+
+        {/* ---------------------------------------------------------------
+            Feed + apparel note
+            --------------------------------------------------------------- */}
+        <Plate id="instagram" plate="Pl. IV" caption="The feed" heading="From the floor" isDark={isDark}>
+          <div ref={feedRef} className={`min-h-[20rem] overflow-hidden border ${rule}`}>
+            {feedArmed ? (
               <div className="elfsight-app-17c86385-c4ee-440f-bab3-a003bbe60d01" />
+            ) : (
+              <div className={`flex min-h-[20rem] items-center justify-center px-6 ${inkSoft}`}>
+                <p className="font-serif text-lg italic">The feed loads as you reach it.</p>
+              </div>
+            )}
+          </div>
+
+          <div className={`mt-10 flex flex-col gap-4 border-t pt-6 sm:flex-row sm:items-baseline sm:justify-between ${rule}`}>
+            <p className={`font-serif text-lg italic ${inkSoft}`}>Fig. 4 — @m1llionfitness</p>
+            <a
+              href="https://www.instagram.com/m1llionfitness/"
+              target="_blank"
+              rel="noreferrer"
+              className={`text-[0.7rem] uppercase tracking-[0.2em] underline underline-offset-[6px] transition-colors hover:text-olive ${focusRing}`}
+            >
+              Follow on Instagram ↗
+            </a>
+          </div>
+
+        </Plate>
+
+        {/* ---------------------------------------------------------------
+            Pl. V — apparel, honestly marked as unfinished
+            --------------------------------------------------------------- */}
+        <Plate id="apparel" plate="Pl. V" caption="In preparation" heading="Apparel" isDark={isDark}>
+          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16">
+            <p className={`max-w-[52ch] font-serif text-[clamp(1.15rem,2vw,1.5rem)] font-light leading-[1.55] ${ink}`}>
+              Wear with purpose.
+            </p>
+            <div>
+              <p className={`max-w-[54ch] text-[0.95rem] leading-[1.8] ${inkBody}`}>
+                M1LLION apparel is still to come — fewer words, stronger theology, treated like archival
+                institutional graphics rather than gym merchandise. Nothing is for sale yet.
+              </p>
+              <a
+                href="#inquire"
+                onClick={() => setInterest('Apparel')}
+                className={`mt-6 inline-flex items-center gap-3 border px-8 py-4 text-[0.72rem] uppercase tracking-[0.2em] transition-colors ${rule} ${
+                  isDark ? 'hover:border-bone' : 'hover:border-charcoal'
+                } ${focusRing}`}
+              >
+                Ask to be told first
+                <span aria-hidden="true">→</span>
+              </a>
             </div>
           </div>
-        </section>
+        </Plate>
 
-        <section id="contact" className="scroll-mt-24 mx-auto max-w-6xl px-4 py-14">
-          <div className="flex flex-col items-center text-center">
-            <h2 className="text-3xl font-bold">Questions? Let&apos;s talk.</h2>
-            <form
-              action="https://formspree.io/f/xzzjagqp"
-              method="POST"
-              className="mt-6 grid w-full max-w-md gap-3 text-left"
-              acceptCharset="UTF-8"
-              aria-describedby="contact-help"
-            >
-              <input type="hidden" name="_subject" value="New contact from M1llion site" />
-              <input
-                type="text"
-                name="_gotcha"
-                style={{ display: 'none' }}
-                tabIndex={-1}
-                autoComplete="off"
-                aria-hidden="true"
-              />
-              <input className={`w-full rounded-xl border px-4 py-3 outline-none ${isDark ? 'border-white/10 bg-slate-900 text-white placeholder:text-slate-500' : 'border-slate-300 bg-white text-slate-950 placeholder:text-slate-500'} ${focusRing}`} name="name" placeholder="Your name" autoComplete="name" required />
-              <input className={`w-full rounded-xl border px-4 py-3 outline-none ${isDark ? 'border-white/10 bg-slate-900 text-white placeholder:text-slate-500' : 'border-slate-300 bg-white text-slate-950 placeholder:text-slate-500'} ${focusRing}`} name="email" type="email" placeholder="Email" autoComplete="email" required />
-              <textarea className={`w-full rounded-xl border px-4 py-3 outline-none ${isDark ? 'border-white/10 bg-slate-900 text-white placeholder:text-slate-500' : 'border-slate-300 bg-white text-slate-950 placeholder:text-slate-500'} ${focusRing}`} name="message" rows={4} placeholder="How can we help?" />
-              <button type="submit" className={`rounded-xl px-5 py-3 text-sm ${isDark ? 'bg-white text-slate-950' : 'bg-black text-white'} ${focusRing}`}>
-                Send
-              </button>
-              <p id="contact-help" className="text-center text-xs text-slate-600">
-                We&apos;ll respond as soon as possible.
-              </p>
-            </form>
+        {/* ---------------------------------------------------------------
+            Inquire
+            --------------------------------------------------------------- */}
+        <section id="inquire" className="relative isolate overflow-hidden bg-charcoal text-bone">
+          <div className="m1-grain m1-grain-light relative mx-auto max-w-[86rem] px-5 sm:px-8">
+            <div className="flex items-baseline justify-between gap-6 border-b border-bone/25 py-4 text-[0.62rem] uppercase tracking-[0.28em] text-sage">
+              <span>Pl. VI</span>
+              <span>Inquire</span>
+            </div>
+
+            <div className="grid gap-12 py-20 sm:py-28 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-20">
+              <div>
+                <h2 className="font-display text-[clamp(2.2rem,6vw,4rem)] uppercase leading-[0.95]">
+                  Start the
+                  <br />
+                  conversation
+                </h2>
+                <p className="mt-6 max-w-[48ch] font-serif text-xl font-light italic leading-[1.5] text-sand">
+                  Tell Carolina what you are training for.
+                </p>
+                <p className="mt-6 max-w-[52ch] text-[0.95rem] leading-[1.8] text-sage">
+                  {interest === 'Apparel'
+                    ? 'You are asking about apparel — leave your name and email and you will hear when the first pieces are ready.'
+                    : '1:1 coaching starts here. Say where you are now, what you want, and what your week actually looks like — the more honest the picture, the better the programming.'}
+                </p>
+              </div>
+
+              <form onSubmit={submitInquiry} acceptCharset="UTF-8" className="grid gap-7">
+                <input type="hidden" name="_subject" value={`New ${interest} inquiry from M1LLION`} />
+                <input type="hidden" name="interest" value={interest} />
+                <input
+                  type="text"
+                  name="_gotcha"
+                  style={{ display: 'none' }}
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                />
+
+                {[
+                  { name: 'name', label: 'Name', type: 'text', autoComplete: 'name', required: true },
+                  { name: 'email', label: 'Email', type: 'email', autoComplete: 'email', required: true },
+                  { name: 'goal', label: 'What are you training for', type: 'text', required: false },
+                ].map((field) => (
+                  <label key={field.name} className="block">
+                    <span className="block text-[0.72rem] uppercase tracking-[0.2em] text-sage">
+                      {field.label}
+                    </span>
+                    <input
+                      name={field.name}
+                      type={field.type}
+                      autoComplete={field.autoComplete}
+                      required={field.required}
+                      className={`mt-2 w-full border-b border-bone/30 bg-transparent pb-2.5 text-[1.05rem] text-bone outline-none transition-colors focus:border-butter ${focusRing}`}
+                    />
+                  </label>
+                ))}
+
+                <label className="block">
+                  <span className="block text-[0.72rem] uppercase tracking-[0.2em] text-sage">Message</span>
+                  <textarea
+                    name="message"
+                    rows={4}
+                    className={`mt-2 w-full resize-y border-b border-bone/30 bg-transparent pb-2.5 text-[1.05rem] text-bone outline-none transition-colors focus:border-butter ${focusRing}`}
+                  />
+                </label>
+
+                <button
+                  type="submit"
+                  disabled={formState === 'sending'}
+                  className={`mt-1 inline-flex items-center justify-center gap-3 bg-bone px-8 py-4 text-[0.72rem] uppercase tracking-[0.2em] text-charcoal transition-colors hover:bg-butter disabled:cursor-not-allowed disabled:opacity-70 ${focusRing}`}
+                >
+                  {formState === 'sending' ? 'Sending…' : 'Send inquiry'}
+                  {formState === 'sending' ? null : <span aria-hidden="true">→</span>}
+                </button>
+
+                <p aria-live="polite" className="text-[0.85rem] leading-relaxed text-sage">
+                  {formState === 'sent'
+                    ? 'Sent. Your inquiry is with Carolina.'
+                    : formState === 'error'
+                      ? 'That did not send. Email carolina directly, or try again in a moment.'
+                      : 'Your inquiry goes straight to Carolina.'}
+                </p>
+              </form>
+            </div>
           </div>
         </section>
       </main>
 
-      <footer className="border-t">
-        <div className={`mx-auto flex max-w-6xl flex-wrap justify-between gap-4 px-4 py-8 text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-          <span>© {year} M1llion. All rights reserved.</span>
-          <div className="flex gap-4">
-            <a className={`underline ${focusRing}`} href="/privacy">
-              Privacy
-            </a>
-            <a className={`underline ${focusRing}`} href="/terms">
-              Terms of use
-            </a>
+      <footer className={`border-t ${rule}`}>
+        <div className="mx-auto max-w-[86rem] px-5 py-12 sm:px-8">
+          <p className={`font-serif text-[clamp(1.1rem,2.2vw,1.5rem)] font-light italic ${inkSoft}`}>
+            From one to many.
+          </p>
+
+          <div
+            className={`mt-8 flex flex-col gap-4 border-t pt-6 text-[0.68rem] uppercase tracking-[0.18em] sm:flex-row sm:items-center sm:justify-between ${ruleFaint} ${inkSoft}`}
+          >
+            <span>© {year} M1LLION</span>
+            <div className="flex flex-wrap gap-6">
+              <Link to="/login" className={`transition-colors hover:text-olive ${focusRing}`}>
+                Client portal
+              </Link>
+              <a
+                href="https://www.instagram.com/m1llionfitness/"
+                target="_blank"
+                rel="noreferrer"
+                className={`transition-colors hover:text-olive ${focusRing}`}
+              >
+                Instagram
+              </a>
+            </div>
           </div>
         </div>
       </footer>
