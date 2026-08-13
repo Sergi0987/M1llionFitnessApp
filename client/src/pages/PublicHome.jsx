@@ -248,18 +248,22 @@ export default function PublicHome({ theme, setTheme }) {
             Frontispiece
             --------------------------------------------------------------- */}
         <section id="top" className="relative isolate overflow-hidden bg-charcoal text-bone">
-          <div className="absolute inset-0">
+          {/* The photograph is a portrait. Below lg it sits behind the type in a
+              portrait viewport, where it barely crops; from lg it takes its own
+              column so a wide screen never cuts the figure. */}
+          <div className="absolute inset-0 z-0 lg:left-auto lg:w-[46%]">
             <img
               src={heroSrc}
               onError={() => setHeroSrc('/C14.jpeg')}
               alt="Carolina training"
-              className="m1-photo h-full w-full object-cover object-[center_28%] opacity-70"
+              className="m1-photo h-full w-full object-cover object-[center_18%] opacity-80 lg:object-[center_top] lg:opacity-100"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-charcoal/85 via-charcoal/55 to-charcoal" />
-            <div className="absolute inset-0 bg-gradient-to-r from-charcoal/90 via-charcoal/30 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-b from-charcoal/85 via-charcoal/50 to-charcoal lg:hidden" />
+            <div className="absolute inset-0 bg-gradient-to-r from-charcoal/90 via-charcoal/35 to-transparent lg:hidden" />
+            <div className="absolute inset-y-0 left-0 hidden w-40 bg-gradient-to-r from-charcoal to-transparent lg:block" />
           </div>
 
-          <div className="m1-grain m1-grain-light relative mx-auto flex min-h-[max(34rem,88svh)] max-w-[86rem] flex-col justify-end px-5 pb-10 pt-16 sm:px-8 sm:pb-14 sm:pt-24">
+          <div className="m1-grain m1-grain-light relative z-10 mx-auto flex min-h-[max(34rem,88svh)] max-w-[86rem] flex-col justify-end px-5 pb-10 pt-16 sm:px-8 sm:pb-14 sm:pt-24">
             {/* Registration marks — the plate's own corner furniture, holding the
                 top of the sheet without putting a label above the headline. */}
             <div aria-hidden="true" className="pointer-events-none absolute left-5 top-8 sm:left-8 sm:top-12">
@@ -270,7 +274,7 @@ export default function PublicHome({ theme, setTheme }) {
               <span className="absolute right-0 h-px w-8 bg-bone/45" />
               <span className="absolute right-0 h-8 w-px bg-bone/45" />
             </div>
-            <div className="max-w-4xl py-14 sm:py-20">
+            <div className="max-w-4xl py-14 sm:py-20 lg:max-w-[52%]">
               <h1 className="font-display text-[clamp(2.6rem,9vw,6rem)] uppercase leading-[0.92] tracking-[-0.005em]">
                 Strength is
                 <br />

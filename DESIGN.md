@@ -18,10 +18,10 @@ Tokens live in `client/tailwind.config.js`. Balance follows the brand bible: rou
 | `paper` | `#EFEAE2` | Secondary light ground |
 | `charcoal` | `#1F1F1D` | Dark ground; hero and inquire are always charcoal |
 | `graphite` | `#353432` | Body ink on bone; dark figure margin |
-| `sand` | `#DDD3C6` | Figure margin on light; body ink on charcoal |
+| `sand` | `#DDD3C6` | Body ink on charcoal |
 | `sage` | `#AEB1A2` | Secondary ink on charcoal |
 | `olive` | `#6C6A45` | Accent: captions, small labels |
-| `darkolive` | `#454733` | Callout numerals on sand (6.6:1) |
+| `darkolive` | `#454733` | Legend numerals and figure captions on bone |
 | `forest` | `#394337` | The commentary band only |
 | `butter` | `#E7D48B` | Single highlight; dark-theme focus ring; primary hover |
 | `bronze`, `clay`, `stone` | — | Declared, unused on this surface |
@@ -52,7 +52,7 @@ Scale discipline: body `0.95rem/1.7`, measure capped at `52–66ch`. Labels and 
 ## Components
 
 - **`Plate.jsx`** — a section of the atlas. Renders a running head (plate reference left, subject right) above a hairline, a sticky margin folio on `lg`+, and the heading. The running head is document furniture, not an eyebrow: **no label is ever stacked directly above a heading.**
-- **`PlateStudy.jsx`** — the figure and its legend as one unit. Tick positions in the figure's printed margin are *measured* against each legend term (`useLayoutEffect` + `ResizeObserver` + `document.fonts.ready`) so a numeral physically aligns with the entry it refers to. Below `lg` the margin is hidden entirely — stacked, it would key nothing, and the legend's own numerals carry the reference.
+- **`PlateStudy.jsx`** — the figure and its legend as one unit. The photograph is shown whole and unmarked; all numbering lives in the legend beside it. (An earlier build printed keyed tick marks down a margin on the figure itself; the owner asked for them removed — do not reintroduce marks over the photography.)
 - **`ThemeToggle.jsx`** — `variant="plate"` for this surface; the default variant belongs to the portal.
 
 ## Motion
@@ -77,7 +77,7 @@ These are design constraints here, not just copy rules:
 
 ## Known open items
 
-- The callout key refers a numeral to a legend row; it does not annotate a region of the photograph. Per-photo coordinates were deliberately deferred because the editorial photographs are supplied by the client and not yet in the repo.
 - The marginal plate rail is desktop-only; on phones the running head carries the plate reference.
+- The hero photograph is portrait. It takes its own column from `lg` so a wide screen never crops the figure; below `lg` it sits behind the type in a portrait viewport. Any replacement hero image should also be portrait.
 - `client/index.html` ships the direction contract as an HTML comment, visible in view-source, pending the owner's decision.
 - `/privacy` and `/terms` are linked from nowhere on this page now, but no pages exist behind those routes.
