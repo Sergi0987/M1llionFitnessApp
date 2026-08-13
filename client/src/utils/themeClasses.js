@@ -1,17 +1,21 @@
+// The dashboard's token vocabulary, extended from the same M1LLION brand
+// tokens as the public site (see DESIGN.md). Panel sits one step lighter
+// than the page in dark mode (graphite on charcoal) and one step warmer in
+// light mode (paper on bone); subPanel and inputs recess back to the page
+// tone, mirroring the plate's own ground/panel relationship.
 export function getThemeClasses(theme) {
   const isDark = theme === 'dark';
 
   return {
     isDark,
-    eyebrow: isDark ? 'text-pink-400' : 'text-pink-500',
-    muted: isDark ? 'text-slate-400' : 'text-slate-600',
-    panel: isDark
-      ? 'border-slate-800 bg-slate-900'
-      : 'border-slate-200 bg-white shadow-sm',
-    subPanel: isDark ? 'bg-slate-950' : 'bg-slate-50',
+    ink: isDark ? 'text-bone' : 'text-charcoal',
+    eyebrow: isDark ? 'text-sage' : 'text-olive',
+    muted: isDark ? 'text-sand' : 'text-graphite',
+    panel: isDark ? 'border-bone/20 bg-graphite' : 'border-charcoal/20 bg-paper',
+    subPanel: isDark ? 'bg-charcoal' : 'bg-bone',
     input: isDark
-      ? 'border-slate-700 bg-slate-950 text-white placeholder:text-slate-500'
-      : 'border-slate-300 bg-white text-slate-950 placeholder:text-slate-500',
-    divider: isDark ? 'border-slate-800' : 'border-slate-200',
+      ? 'border-bone/20 bg-charcoal text-bone placeholder:text-stone'
+      : 'border-charcoal/20 bg-bone text-charcoal placeholder:text-stone',
+    divider: isDark ? 'border-bone/12' : 'border-charcoal/10',
   };
 }

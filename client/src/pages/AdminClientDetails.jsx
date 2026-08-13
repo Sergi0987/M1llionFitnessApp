@@ -142,9 +142,9 @@ export default function AdminClientDetails({ theme }) {
 
       <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <Badge value={client.status} />
+          <Badge value={client.status} isDark={classes.isDark} />
 
-          <h1 className="mt-4 text-4xl font-black">{client.name}</h1>
+          <h1 className="mt-4 font-display text-4xl uppercase leading-[0.96]">{client.name}</h1>
 
           <p className={`mt-2 ${classes.muted}`}>
             {client.email} · {client.phone || 'No phone'}
@@ -160,14 +160,18 @@ export default function AdminClientDetails({ theme }) {
         <button
           type="button"
           onClick={() => setShowDeleteModal(true)}
-          className="rounded-xl border border-red-500 px-4 py-2 text-sm font-semibold text-red-400 transition hover:bg-red-500 hover:text-white"
+          className={`border px-4 py-2 text-sm font-semibold uppercase tracking-[0.06em] transition ${
+            classes.isDark
+              ? 'border-red-500/40 text-red-300 hover:bg-red-500 hover:text-bone'
+              : 'border-red-600/40 text-red-700 hover:bg-red-600 hover:text-bone'
+          }`}
         >
           Delete Client
         </button>
       </div>
 
       {error ? (
-        <p className="mt-6 rounded-md bg-red-500/10 p-3 text-red-300">
+        <p className={`mt-6 border p-3 ${classes.isDark ? 'border-red-500/30 bg-red-500/10 text-red-300' : 'border-red-600/25 bg-red-50 text-red-700'}`}>
           {error}
         </p>
       ) : null}
@@ -175,12 +179,12 @@ export default function AdminClientDetails({ theme }) {
       <div className="mt-8 grid gap-6 lg:grid-cols-3">
         <form
           onSubmit={saveStatus}
-          className={`rounded-2xl border p-6 ${classes.panel}`}
+          className={`border p-6 ${classes.panel}`}
         >
           <h2 className="text-xl font-bold">Edit status</h2>
 
           <select
-            className={`mt-4 w-full rounded-xl border px-4 py-3 outline-none focus:border-pink-500 ${classes.input}`}
+            className={`mt-4 w-full border px-4 py-3 outline-none focus:border-olive ${classes.input}`}
             value={status}
             onChange={(event) => setStatus(event.target.value)}
           >
@@ -189,19 +193,19 @@ export default function AdminClientDetails({ theme }) {
             ))}
           </select>
 
-          <Button className="mt-4" type="submit">
+          <Button className="mt-4" type="submit" isDark={classes.isDark}>
             Save Status
           </Button>
         </form>
 
         <form
           onSubmit={assignProgram}
-          className={`rounded-2xl border p-6 ${classes.panel}`}
+          className={`border p-6 ${classes.panel}`}
         >
           <h2 className="text-xl font-bold">Assign program</h2>
 
           <select
-            className={`mt-4 w-full rounded-xl border px-4 py-3 outline-none focus:border-pink-500 ${classes.input}`}
+            className={`mt-4 w-full border px-4 py-3 outline-none focus:border-olive ${classes.input}`}
             value={selectedProgram}
             onChange={(event) => setSelectedProgram(event.target.value)}
           >
@@ -216,6 +220,7 @@ export default function AdminClientDetails({ theme }) {
             className="mt-4"
             type="submit"
             disabled={!programs.length}
+            isDark={classes.isDark}
           >
             Assign Program
           </Button>
@@ -223,25 +228,25 @@ export default function AdminClientDetails({ theme }) {
 
         <form
           onSubmit={addNote}
-          className={`rounded-2xl border p-6 ${classes.panel}`}
+          className={`border p-6 ${classes.panel}`}
         >
           <h2 className="text-xl font-bold">Add profile note</h2>
 
           <textarea
-            className={`mt-4 min-h-24 w-full rounded-xl border px-4 py-3 outline-none focus:border-pink-500 ${classes.input}`}
+            className={`mt-4 min-h-24 w-full border px-4 py-3 outline-none focus:border-olive ${classes.input}`}
             value={note}
             onChange={(event) => setNote(event.target.value)}
             placeholder="Add coaching context, preferences, injuries, or reminders."
           />
 
-          <Button className="mt-4" type="submit">
+          <Button className="mt-4" type="submit" isDark={classes.isDark}>
             Add Note
           </Button>
         </form>
 
         <form
           onSubmit={resetPassword}
-          className={`rounded-2xl border p-6 ${classes.panel}`}
+          className={`border p-6 ${classes.panel}`}
         >
           <h2 className="text-xl font-bold">Reset login password</h2>
 
@@ -251,7 +256,7 @@ export default function AdminClientDetails({ theme }) {
           </p>
 
           <input
-            className={`mt-4 w-full rounded-xl border px-4 py-3 outline-none focus:border-pink-500 ${classes.input}`}
+            className={`mt-4 w-full border px-4 py-3 outline-none focus:border-olive ${classes.input}`}
             type="text"
             minLength={8}
             placeholder="New password (at least 8 characters)"
@@ -262,22 +267,22 @@ export default function AdminClientDetails({ theme }) {
 
           {resetMessage ? (
             <p
-              className={`mt-3 rounded-md bg-emerald-500/10 p-3 text-sm ${
-                classes.isDark ? 'text-emerald-300' : 'text-emerald-600'
+              className={`mt-3 border p-3 text-sm ${
+                classes.isDark ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300' : 'border-emerald-600/25 bg-emerald-50 text-emerald-700'
               }`}
             >
               {resetMessage}
             </p>
           ) : null}
 
-          <Button className="mt-4" type="submit">
+          <Button className="mt-4" type="submit" isDark={classes.isDark}>
             Reset Password
           </Button>
         </form>
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-3">
-        <div className={`rounded-2xl border p-6 ${classes.panel}`}>
+        <div className={`border p-6 ${classes.panel}`}>
           <h2 className="text-xl font-bold">Programs</h2>
 
           <div className="mt-4 space-y-3">
@@ -285,11 +290,11 @@ export default function AdminClientDetails({ theme }) {
               client.programs.map((program) => (
                 <article
                   key={program.id}
-                  className={`rounded-xl p-4 ${classes.subPanel}`}
+                  className={`p-4 ${classes.subPanel}`}
                 >
                   <div className="flex justify-between gap-3">
                     <p className="font-semibold">{program.title}</p>
-                    <Badge value={program.difficulty} />
+                    <Badge value={program.difficulty} isDark={classes.isDark} />
                   </div>
                 </article>
               ))
@@ -301,7 +306,7 @@ export default function AdminClientDetails({ theme }) {
           </div>
         </div>
 
-        <div className={`rounded-2xl border p-6 ${classes.panel}`}>
+        <div className={`border p-6 ${classes.panel}`}>
           <h2 className="text-xl font-bold">Profile notes</h2>
 
           <div className="mt-4 space-y-3">
@@ -309,7 +314,7 @@ export default function AdminClientDetails({ theme }) {
               client.notes.map((item) => (
                 <article
                   key={item.id}
-                  className={`rounded-xl p-4 ${classes.subPanel}`}
+                  className={`p-4 ${classes.subPanel}`}
                 >
                   <p className="text-sm">{item.note}</p>
 
@@ -326,7 +331,7 @@ export default function AdminClientDetails({ theme }) {
           </div>
         </div>
 
-        <div className={`rounded-2xl border p-6 ${classes.panel}`}>
+        <div className={`border p-6 ${classes.panel}`}>
           <h2 className="text-xl font-bold">Activity</h2>
 
           <p className={`mt-4 text-sm ${classes.muted}`}>
@@ -340,7 +345,7 @@ export default function AdminClientDetails({ theme }) {
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
-        <div className={`rounded-2xl border p-6 ${classes.panel}`}>
+        <div className={`border p-6 ${classes.panel}`}>
           <h2 className="text-xl font-bold">Weight trend</h2>
 
           <div className="mt-4">
@@ -348,7 +353,7 @@ export default function AdminClientDetails({ theme }) {
           </div>
         </div>
 
-        <div className={`rounded-2xl border p-6 ${classes.panel}`}>
+        <div className={`border p-6 ${classes.panel}`}>
           <h2 className="text-xl font-bold">Recent check-ins</h2>
 
           <div className="mt-4 max-h-96 space-y-3 overflow-y-auto pr-1">
@@ -356,11 +361,11 @@ export default function AdminClientDetails({ theme }) {
               client.checkins.map((checkin) => (
                 <article
                   key={checkin.id}
-                  className={`rounded-xl p-4 ${classes.subPanel}`}
+                  className={`p-4 ${classes.subPanel}`}
                 >
                   <p
                     className={`text-sm font-semibold ${
-                      classes.isDark ? 'text-pink-300' : 'text-pink-600'
+                      classes.isDark ? 'text-butter' : 'text-olive'
                     }`}
                   >
                     {Number(checkin.weight).toString()} lbs ·{' '}
@@ -376,7 +381,7 @@ export default function AdminClientDetails({ theme }) {
                     <img
                       src={checkin.photo}
                       alt={`Progress photo from ${formatDate(checkin.created_at)}`}
-                      className="mt-3 max-h-48 rounded-lg object-cover"
+                      className={`mt-3 max-h-48 border object-cover ${classes.divider}`}
                       loading="lazy"
                     />
                   ) : null}
@@ -399,9 +404,9 @@ export default function AdminClientDetails({ theme }) {
           aria-labelledby="delete-client-title"
         >
           <div
-            className={`w-full max-w-md rounded-2xl border p-6 shadow-2xl ${classes.panel}`}
+            className={`w-full max-w-md border p-6 ${classes.panel}`}
           >
-            <h2 id="delete-client-title" className="text-2xl font-bold">
+            <h2 id="delete-client-title" className="font-display text-2xl uppercase leading-[0.96]">
               Delete client?
             </h2>
 
@@ -411,7 +416,7 @@ export default function AdminClientDetails({ theme }) {
               account, check-ins, workouts, notes, and assigned programs.
             </p>
 
-            <p className="mt-3 text-sm font-semibold text-red-400">
+            <p className={`mt-3 text-sm font-semibold ${classes.isDark ? 'text-red-300' : 'text-red-700'}`}>
               This action cannot be undone.
             </p>
 
@@ -420,7 +425,9 @@ export default function AdminClientDetails({ theme }) {
                 type="button"
                 onClick={() => setShowDeleteModal(false)}
                 disabled={isDeleting}
-                className="rounded-xl border px-4 py-2 text-sm font-semibold transition hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50"
+                className={`border px-4 py-2 text-sm font-semibold transition hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-50 ${
+                  classes.isDark ? 'border-bone/25 text-bone' : 'border-charcoal/25 text-charcoal'
+                }`}
               >
                 Cancel
               </button>
@@ -429,7 +436,11 @@ export default function AdminClientDetails({ theme }) {
                 type="button"
                 onClick={handleDeleteClient}
                 disabled={isDeleting}
-                className="rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+                className={`border px-4 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50 ${
+                  classes.isDark
+                    ? 'border-red-500/40 bg-red-500 text-bone hover:bg-red-600'
+                    : 'border-red-600/40 bg-red-600 text-bone hover:bg-red-700'
+                }`}
               >
                 {isDeleting ? 'Deleting...' : 'Delete Client'}
               </button>

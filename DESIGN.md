@@ -1,6 +1,6 @@
 # Design
 
-Recorded from the built public site (`client/src/pages/PublicHome.jsx` and its plate components). The portal and admin dashboards are a separate, older visual world and are **not** described here.
+Recorded from the built public site (`client/src/pages/PublicHome.jsx` and its plate components) and extended to the login page, the admin dashboard, and the client portal. One brand, two modes: the public site is Persuade (the full plate ritual — grain, folios, marginal numbering); the dashboards are Operate (the same tokens, restrained — no grain, no Anton in controls, no fluid type). See "Operate extension" below for what changes between them and what doesn't.
 
 ## Visual world
 
@@ -75,9 +75,33 @@ These are design constraints here, not just copy rules:
 - Faith is foundational and visible, expressed through the brand's own approved lines. **Do not add Scripture citations** that the client has not approved.
 - The inquiry form states what actually happens ("Your inquiry goes straight to Carolina") and its error names a recovery that exists.
 
+## Operate extension (login, dashboards, portal)
+
+Same tokens as the public site, applied per `operate.md`'s rules for product UI: one family (DM Sans; Anton is reserved for page-level H1s only — never buttons, badges, table data, or nav labels), a fixed (non-fluid) scale, and Restrained color — the accent carries primary actions and status only, never decoration.
+
+**Files:** `App.jsx` (the `Shell`/nav), `pages/Login.jsx`, `pages/AdminDashboard.jsx`, `pages/AdminClients.jsx`, `pages/AdminClientDetails.jsx`, `pages/AdminPrograms.jsx`, `pages/ClientPortal.jsx`, `pages/ClientWorkouts.jsx`, `pages/AccountSettings.jsx`, and the shared `utils/themeClasses.js`, `components/Button.jsx`, `components/Badge.jsx`, `components/ThemeToggle.jsx`, `components/WeightChart.jsx`.
+
+**Ground/panel relationship** (`getThemeClasses`, mirrors the plate's own ground/panel logic):
+- Page: charcoal (dark) / bone (light).
+- Panel (cards, forms): graphite (dark) / paper (light) — one step off the page.
+- subPanel / inputs: recess back to the page tone (charcoal / bone) — a "sunken field" look inside a panel.
+- All borders `/20` (dark: bone; light: charcoal); faint internal dividers `/12` (dark) `/10` (light).
+
+**Button** (`Button.jsx`): primary is a *fixed* `bg-olive text-bone`, deliberately theme-independent — since it supplies its own fill, it reads correctly on both page grounds without an `isDark` prop, and its ~5.5:1 contrast holds for both. Secondary and danger sit directly on the page ground, so those two variants take `isDark` explicitly. Every button in the codebase passes `isDark={classes.isDark}` (or omits it for primary, which doesn't need it) — do the same for new ones. Square corners, no shadow. Focus ring is `ring-olive` universally (validated ≥3:1 against both bone and charcoal, so it never needs to know the theme either).
+
+**Badge** (`Badge.jsx`): client status (Active/Paused/Completed) keeps real semantic color — green/amber/blue — because that's a functional signal a coach triages at a glance, not brand decoration. Program difficulty (Beginner/Intermediate/Advanced) ties to the brand's earth palette instead (sage/olive → bronze/clay → a solid inverted chip for Advanced), since it isn't a status that needs the same urgency read. Needs `isDark` — it has no theme-independent fixed-color option like Button does, because both its light and dark tints are translucent overlays meant to sit on the *panel*, and panel color itself changes per theme.
+
+**WeightChart** (`WeightChart.jsx`): SVG can't consume Tailwind classes, so its colors are hardcoded hex matching the token table above (olive/butter line, sand/graphite labels, bone/charcoal tooltip) — keep them in sync by hand if the token hexes ever change.
+
+**ThemeToggle**: one look now, no `variant` prop — the public site, login, and dashboards all render the same control.
+
+**`:root` in `styles.css`**: the font-family and pre-paint background fallback were updated to DM Sans / charcoal, replacing a stale Inter/near-black-slate default that predated this extension and no longer matches anything the app actually renders.
+
 ## Known open items
 
 - The marginal plate rail is desktop-only; on phones the running head carries the plate reference.
 - The hero photograph is full-bleed atmosphere, not a portrait: dimmed to 80%, anchored `object-top`, under a vertical wash that stays light at the top so the subject's head reads and deepens to solid charcoal at the baseline, plus a left-to-right wash that carries the type. A wide viewport crops a portrait image hard, so anchoring to the top is what keeps the head in frame — a replacement image needs its subject in the upper third.
 - `client/index.html` ships the direction contract as an HTML comment, visible in view-source, pending the owner's decision.
 - `/privacy` and `/terms` are linked from nowhere on this page now, but no pages exist behind those routes.
+- `components/BodyProgressVisual.jsx` is unused dead code (not imported anywhere) and was left on the old slate/pink palette rather than retoned, since it isn't part of any rendered surface.
+- The Logout button in `App.jsx` is solid-filled (bone-on-charcoal / charcoal-on-bone) rather than outlined like the rest of the nav — a deliberate exception so it reads as a distinct, terminal action, not another destination link.

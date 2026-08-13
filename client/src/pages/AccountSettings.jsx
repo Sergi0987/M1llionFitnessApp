@@ -50,7 +50,7 @@ export default function AccountSettings({ theme }) {
         Account
       </p>
 
-      <h1 className="mt-2 text-3xl font-black leading-tight sm:text-4xl">Account settings</h1>
+      <h1 className="mt-2 font-display text-3xl uppercase leading-[0.96] sm:text-4xl">Account settings</h1>
 
       <p className={`mt-3 max-w-2xl text-sm sm:text-base ${classes.muted}`}>
         Signed in as <span className="font-semibold">{session?.user?.email}</span>
@@ -58,7 +58,7 @@ export default function AccountSettings({ theme }) {
 
       <form
         onSubmit={handleSubmit}
-        className={`mt-6 max-w-md space-y-4 rounded-2xl border p-4 sm:mt-8 sm:p-6 ${classes.panel}`}
+        className={`mt-6 max-w-md space-y-4 border p-4 sm:mt-8 sm:p-6 ${classes.panel}`}
       >
         <h2 className="text-lg font-bold sm:text-xl">Change password</h2>
 
@@ -68,7 +68,7 @@ export default function AccountSettings({ theme }) {
           </span>
 
           <input
-            className={`w-full rounded-xl border px-4 py-3 outline-none focus:border-pink-500 ${classes.input}`}
+            className={`w-full border px-4 py-3 outline-none focus:border-olive ${classes.input}`}
             type="password"
             autoComplete="current-password"
             value={form.current_password}
@@ -83,7 +83,7 @@ export default function AccountSettings({ theme }) {
           </span>
 
           <input
-            className={`w-full rounded-xl border px-4 py-3 outline-none focus:border-pink-500 ${classes.input}`}
+            className={`w-full border px-4 py-3 outline-none focus:border-olive ${classes.input}`}
             type="password"
             autoComplete="new-password"
             minLength={8}
@@ -99,7 +99,7 @@ export default function AccountSettings({ theme }) {
           </span>
 
           <input
-            className={`w-full rounded-xl border px-4 py-3 outline-none focus:border-pink-500 ${classes.input}`}
+            className={`w-full border px-4 py-3 outline-none focus:border-olive ${classes.input}`}
             type="password"
             autoComplete="new-password"
             minLength={8}
@@ -110,18 +110,18 @@ export default function AccountSettings({ theme }) {
         </label>
 
         {error ? (
-          <p className={`rounded-md bg-red-500/10 p-3 text-sm ${classes.isDark ? 'text-red-300' : 'text-red-600'}`}>
+          <p className={`border p-3 text-sm ${classes.isDark ? 'border-red-500/30 bg-red-500/10 text-red-300' : 'border-red-600/25 bg-red-50 text-red-700'}`}>
             {error}
           </p>
         ) : null}
 
         {success ? (
-          <p className={`rounded-md bg-emerald-500/10 p-3 text-sm ${classes.isDark ? 'text-emerald-300' : 'text-emerald-600'}`}>
+          <p className={`border p-3 text-sm ${classes.isDark ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300' : 'border-emerald-600/25 bg-emerald-50 text-emerald-700'}`}>
             {success}
           </p>
         ) : null}
 
-        <Button className="w-full sm:w-auto" type="submit" disabled={saving}>
+        <Button className="w-full sm:w-auto" type="submit" disabled={saving} isDark={classes.isDark}>
           {saving ? 'Updating...' : 'Update password'}
         </Button>
       </form>

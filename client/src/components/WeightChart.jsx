@@ -22,14 +22,16 @@ export default function WeightChart({ checkins, theme }) {
     [checkins],
   );
 
-  const lineColor = isDark ? '#ec4899' : '#db2777';
-  const gridColor = isDark ? '#1e293b' : '#e2e8f0';
-  const labelColor = isDark ? '#94a3b8' : '#64748b';
-  const surfaceColor = isDark ? '#0f172a' : '#ffffff';
+  // M1LLION brand tokens (see tailwind.config.js) — hardcoded because SVG
+  // fill/stroke attributes can't consume Tailwind classes.
+  const lineColor = isDark ? '#E7D48B' /* butter */ : '#6C6A45' /* olive */;
+  const gridColor = isDark ? '#F5F2EC1F' /* bone/12 */ : '#1F1F1D1A' /* charcoal/10 */;
+  const labelColor = isDark ? '#DDD3C6' /* sand */ : '#353432' /* graphite */;
+  const surfaceColor = isDark ? '#353432' /* graphite */ : '#EFEAE2' /* paper */;
 
   if (points.length < 2) {
     return (
-      <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+      <p className={`text-sm ${isDark ? 'text-sand' : 'text-graphite'}`}>
         Weight trend appears here after two or more check-ins.
       </p>
     );
@@ -129,8 +131,8 @@ export default function WeightChart({ checkins, theme }) {
 
       {hovered ? (
         <div
-          className={`pointer-events-none absolute -translate-x-1/2 rounded-lg border px-3 py-1.5 text-xs font-semibold shadow ${
-            isDark ? 'border-slate-700 bg-slate-800 text-white' : 'border-slate-200 bg-white text-slate-900'
+          className={`pointer-events-none absolute -translate-x-1/2 border px-3 py-1.5 text-xs font-semibold ${
+            isDark ? 'border-bone/20 bg-charcoal text-bone' : 'border-charcoal/20 bg-bone text-charcoal'
           }`}
           style={{
             left: `${(hovered.x / WIDTH) * 100}%`,

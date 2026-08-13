@@ -7,6 +7,10 @@ export default function AdminDashboard({ theme }) {
   const [programs, setPrograms] = useState([]);
   const [error, setError] = useState('');
   const isDark = theme === 'dark';
+  const eyebrow = isDark ? 'text-sage' : 'text-olive';
+  const muted = isDark ? 'text-sand' : 'text-graphite';
+  const panel = isDark ? 'border-bone/20 bg-graphite' : 'border-charcoal/20 bg-paper';
+  const subPanel = isDark ? 'bg-charcoal' : 'bg-bone';
 
   useEffect(() => {
     async function load() {
@@ -27,9 +31,13 @@ export default function AdminDashboard({ theme }) {
 
   return (
     <section className="mx-auto max-w-7xl px-6 py-10">
-      <p className="text-sm font-bold uppercase tracking-[0.2em] text-pink-500">Admin</p>
-      <h1 className={`mt-2 text-4xl font-black ${isDark ? 'text-white' : 'text-slate-950'}`}>Business command center</h1>
-      {error ? <p className="mt-6 rounded-md bg-red-500/10 p-3 text-red-200">{error}</p> : null}
+      <p className={`text-sm font-bold uppercase tracking-[0.2em] ${eyebrow}`}>Admin</p>
+      <h1 className="mt-2 font-display text-4xl uppercase leading-[0.96]">Business command center</h1>
+      {error ? (
+        <p className={`mt-6 border p-3 ${isDark ? 'border-red-500/30 bg-red-500/10 text-red-300' : 'border-red-600/25 bg-red-50 text-red-700'}`}>
+          {error}
+        </p>
+      ) : null}
       <div className="mt-8 grid gap-4 md:grid-cols-4">
         {[
           ['Clients', clients.length],
@@ -37,35 +45,35 @@ export default function AdminDashboard({ theme }) {
           ['Check-ins', checkins],
           ['Workouts', workouts],
         ].map(([label, value]) => (
-          <article key={label} className={`rounded-2xl border p-5 shadow-sm ${isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-200 bg-white'}`}>
-            <p className={isDark ? 'text-sm text-slate-400' : 'text-sm text-slate-600'}>{label}</p>
-            <p className={`mt-2 text-3xl font-black ${isDark ? 'text-white' : 'text-slate-950'}`}>{value}</p>
+          <article key={label} className={`border p-5 ${panel}`}>
+            <p className={`text-sm ${muted}`}>{label}</p>
+            <p className="mt-2 text-3xl font-black">{value}</p>
           </article>
         ))}
       </div>
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
-        <div className={`rounded-2xl border p-6 shadow-sm ${isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-200 bg-white'}`}>
+        <div className={`border p-6 ${panel}`}>
           <h2 className="text-xl font-bold">Recent clients</h2>
           <div className="mt-4 space-y-3">
             {clients.slice(0, 5).map((client) => (
-              <div key={client.id} className={`flex justify-between rounded-xl p-4 ${isDark ? 'bg-slate-950' : 'bg-slate-50'}`}>
+              <div key={client.id} className={`flex justify-between p-4 ${subPanel}`}>
                 <div>
                   <p className="font-semibold">{client.name}</p>
-                  <p className={isDark ? 'text-sm text-slate-400' : 'text-sm text-slate-600'}>{client.email}</p>
+                  <p className={`text-sm ${muted}`}>{client.email}</p>
                 </div>
-                <Badge value={client.status} />
+                <Badge value={client.status} isDark={isDark} />
               </div>
             ))}
           </div>
         </div>
-        <div className={`rounded-2xl border p-6 shadow-sm ${isDark ? 'border-slate-800 bg-slate-900' : 'border-slate-200 bg-white'}`}>
+        <div className={`border p-6 ${panel}`}>
           <h2 className="text-xl font-bold">Programs</h2>
           <div className="mt-4 space-y-3">
             {programs.slice(0, 5).map((program) => (
-              <div key={program.id} className={`rounded-xl p-4 ${isDark ? 'bg-slate-950' : 'bg-slate-50'}`}>
+              <div key={program.id} className={`p-4 ${subPanel}`}>
                 <div className="flex justify-between gap-3">
                   <p className="font-semibold">{program.title}</p>
-                  <Badge value={program.difficulty} />
+                  <Badge value={program.difficulty} isDark={isDark} />
                 </div>
               </div>
             ))}

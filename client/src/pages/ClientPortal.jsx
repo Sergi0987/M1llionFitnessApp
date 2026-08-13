@@ -90,7 +90,7 @@ export default function ClientPortal({ theme }) {
         Client Portal
       </p>
 
-      <h1 className="mt-2 text-3xl font-black leading-tight sm:text-4xl">
+      <h1 className="mt-2 font-display text-3xl uppercase leading-[0.96] sm:text-4xl">
         Welcome, {data.client.name}
       </h1>
 
@@ -99,14 +99,14 @@ export default function ClientPortal({ theme }) {
       </p>
 
       {error ? (
-        <p className="mt-6 rounded-md bg-red-500/10 p-3 text-sm text-red-300">
+        <p className={`mt-6 border p-3 text-sm ${classes.isDark ? 'border-red-500/30 bg-red-500/10 text-red-300' : 'border-red-600/25 bg-red-50 text-red-700'}`}>
           {error}
         </p>
       ) : null}
 
       <div className="mt-6 grid grid-cols-3 gap-2 sm:mt-8 sm:gap-4">
         <article
-          className={`min-w-0 rounded-xl border p-3 sm:rounded-2xl sm:p-5 ${classes.panel}`}
+          className={`min-w-0 border p-3 sm:p-5 ${classes.panel}`}
         >
           <p className={`text-[11px] leading-tight sm:text-sm ${classes.muted}`}>
             Assigned Programs
@@ -117,7 +117,7 @@ export default function ClientPortal({ theme }) {
         </article>
 
         <article
-          className={`min-w-0 rounded-xl border p-3 sm:rounded-2xl sm:p-5 ${classes.panel}`}
+          className={`min-w-0 border p-3 sm:p-5 ${classes.panel}`}
         >
           <p className={`text-[11px] leading-tight sm:text-sm ${classes.muted}`}>
             Check-ins
@@ -128,7 +128,7 @@ export default function ClientPortal({ theme }) {
         </article>
 
         <article
-          className={`min-w-0 rounded-xl border p-3 sm:rounded-2xl sm:p-5 ${classes.panel}`}
+          className={`min-w-0 border p-3 sm:p-5 ${classes.panel}`}
         >
           <p className={`text-[11px] leading-tight sm:text-sm ${classes.muted}`}>
             Workouts
@@ -142,7 +142,7 @@ export default function ClientPortal({ theme }) {
       <div className="mt-6 grid gap-5 sm:mt-8 sm:gap-6 lg:grid-cols-[0.9fr_1.1fr]">
         <form
           onSubmit={addCheckin}
-          className={`space-y-4 rounded-2xl border p-4 sm:p-6 ${classes.panel}`}
+          className={`space-y-4 border p-4 sm:p-6 ${classes.panel}`}
         >
           <h2 className="text-lg font-bold sm:text-xl">Weekly check-in</h2>
 
@@ -152,7 +152,7 @@ export default function ClientPortal({ theme }) {
             </span>
 
             <input
-              className={`w-full rounded-xl border px-4 py-3 outline-none focus:border-pink-500 ${classes.input}`}
+              className={`w-full border px-4 py-3 outline-none focus:border-olive ${classes.input}`}
               placeholder="Enter weight"
               type="number"
               step="0.1"
@@ -173,7 +173,7 @@ export default function ClientPortal({ theme }) {
             </span>
 
             <input
-              className={`w-full rounded-xl border px-4 py-3 outline-none focus:border-pink-500 ${classes.input}`}
+              className={`w-full border px-4 py-3 outline-none focus:border-olive ${classes.input}`}
               type="number"
               min="1"
               max="10"
@@ -194,7 +194,7 @@ export default function ClientPortal({ theme }) {
             </span>
 
             <textarea
-              className={`min-h-24 w-full rounded-xl border px-4 py-3 outline-none focus:border-pink-500 sm:min-h-28 ${classes.input}`}
+              className={`min-h-24 w-full border px-4 py-3 outline-none focus:border-olive sm:min-h-28 ${classes.input}`}
               placeholder="How did the week go?"
               value={form.notes}
               onChange={(event) =>
@@ -214,7 +214,7 @@ export default function ClientPortal({ theme }) {
 
             <input
               ref={photoInputRef}
-              className={`w-full rounded-xl border px-4 py-2.5 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-pink-500 file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-white ${classes.input}`}
+              className={`w-full border px-4 py-2.5 text-sm file:mr-3 file:border-0 file:bg-olive file:px-3 file:py-1.5 file:text-sm file:font-semibold file:text-bone ${classes.input}`}
               type="file"
               accept="image/*"
               onChange={handlePhotoChange}
@@ -225,16 +225,16 @@ export default function ClientPortal({ theme }) {
             <img
               src={photo}
               alt="Progress preview"
-              className="max-h-40 rounded-xl object-cover"
+              className={`max-h-40 border object-cover ${classes.divider}`}
             />
           ) : null}
 
-          <Button className="w-full sm:w-auto" type="submit" disabled={saving}>
+          <Button className="w-full sm:w-auto" type="submit" disabled={saving} isDark={classes.isDark}>
             {saving ? 'Submitting...' : 'Submit Check-in'}
           </Button>
         </form>
 
-        <div className={`rounded-2xl border p-4 sm:p-6 ${classes.panel}`}>
+        <div className={`border p-4 sm:p-6 ${classes.panel}`}>
           <h2 className="text-lg font-bold sm:text-xl">Assigned programs</h2>
 
           <div className="mt-4 space-y-3">
@@ -242,7 +242,7 @@ export default function ClientPortal({ theme }) {
               data.programs.map((program) => (
                 <article
                   key={program.id}
-                  className={`rounded-xl p-4 ${classes.subPanel}`}
+                  className={`p-4 ${classes.subPanel}`}
                 >
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                     <p className="text-base font-semibold sm:text-lg">
@@ -250,7 +250,7 @@ export default function ClientPortal({ theme }) {
                     </p>
 
                     <div className="self-start">
-                      <Badge value={program.difficulty} />
+                      <Badge value={program.difficulty} isDark={classes.isDark} />
                     </div>
                   </div>
 
@@ -263,8 +263,8 @@ export default function ClientPortal({ theme }) {
                       {program.workouts.map((workout) => (
                         <div
                           key={workout.id}
-                          className={`rounded-lg p-3 sm:p-4 ${
-                            classes.isDark ? 'bg-slate-900' : 'bg-white'
+                          className={`p-3 sm:p-4 ${
+                            classes.isDark ? 'bg-graphite' : 'bg-bone'
                           }`}
                         >
                           <p className="text-sm font-semibold sm:text-base">
@@ -306,7 +306,7 @@ export default function ClientPortal({ theme }) {
       </div>
 
       <div
-        className={`mt-6 rounded-2xl border p-4 sm:mt-8 sm:p-6 ${classes.panel}`}
+        className={`mt-6 border p-4 sm:mt-8 sm:p-6 ${classes.panel}`}
       >
         <h2 className="text-lg font-bold sm:text-xl">Weight trend</h2>
 
@@ -316,7 +316,7 @@ export default function ClientPortal({ theme }) {
       </div>
 
       <div
-        className={`mt-6 rounded-2xl border p-4 sm:mt-8 sm:p-6 ${classes.panel}`}
+        className={`mt-6 border p-4 sm:mt-8 sm:p-6 ${classes.panel}`}
       >
         <h2 className="text-lg font-bold sm:text-xl">Recent check-ins</h2>
 
@@ -325,11 +325,11 @@ export default function ClientPortal({ theme }) {
             data.checkins.slice(0, 5).map((checkin) => (
               <article
                 key={checkin.id}
-                className={`rounded-xl p-4 ${classes.subPanel}`}
+                className={`p-4 ${classes.subPanel}`}
               >
                 <p
                   className={`text-sm font-semibold ${
-                    classes.isDark ? 'text-pink-300' : 'text-pink-600'
+                    classes.isDark ? 'text-butter' : 'text-olive'
                   }`}
                 >
                   {Number(checkin.weight).toString()} lbs ·{' '}
@@ -338,9 +338,7 @@ export default function ClientPortal({ theme }) {
                 </p>
 
                 <p
-                  className={`mt-2 text-sm leading-6 ${
-                    classes.isDark ? 'text-slate-300' : 'text-slate-700'
-                  }`}
+                  className={`mt-2 text-sm leading-6 ${classes.muted}`}
                 >
                   {checkin.notes}
                 </p>
@@ -349,7 +347,7 @@ export default function ClientPortal({ theme }) {
                   <img
                     src={checkin.photo}
                     alt={`Progress photo from ${formatDate(checkin.created_at)}`}
-                    className="mt-3 max-h-48 rounded-lg object-cover"
+                    className={`mt-3 max-h-48 border object-cover ${classes.divider}`}
                     loading="lazy"
                   />
                 ) : null}

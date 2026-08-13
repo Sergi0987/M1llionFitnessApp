@@ -24,53 +24,64 @@ function Shell({ children, role, theme, setTheme }) {
     navigate('/');
   }
 
+  const navLink = `border px-4 py-2 text-[0.78rem] font-semibold uppercase tracking-[0.06em] transition-colors ${
+    isDark ? 'border-bone/20 text-bone hover:border-bone/50' : 'border-charcoal/20 text-charcoal hover:border-charcoal/50'
+  }`;
+
   return (
     <main
-      className={`min-h-screen px-4 sm:px-6 ${
+      className={`m1 min-h-screen px-4 sm:px-6 ${
         isDark
-          ? 'bg-slate-950 text-white'
-          : 'bg-white text-slate-950'
+          ? 'bg-charcoal text-bone'
+          : 'bg-bone text-charcoal'
       }`}
     >
-      <header className={`border-b ${isDark ? 'border-slate-800 bg-slate-950/95' : 'border-slate-200 bg-white/95 backdrop-blur'}`}>
+      <header className={`border-b ${isDark ? 'border-bone/20 bg-charcoal/95' : 'border-charcoal/15 bg-bone/95 backdrop-blur'}`}>
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
           <Link to={role === 'admin' ? '/admin' : '/app'} className="text-left">
             <img src={logo} alt="M1llion Fitness" className="h-10 w-auto" />
-            <p className={`mt-1 text-sm ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
+            <p className={`mt-1 text-[0.7rem] uppercase tracking-[0.14em] ${isDark ? 'text-sage' : 'text-olive'}`}>
               {role === 'admin' ? 'Coach dashboard' : 'Client portal'}
             </p>
           </Link>
-          <nav className="flex flex-wrap gap-3">
+          <nav className="flex flex-wrap items-center gap-3">
             {role === 'admin' ? (
               <>
-                <Link className={`rounded-md border px-4 py-2 text-sm font-semibold ${isDark ? 'border-slate-700' : 'border-slate-300'}`} to="/admin">
+                <Link className={navLink} to="/admin">
                   Dashboard
                 </Link>
-                <Link className={`rounded-md border px-4 py-2 text-sm font-semibold ${isDark ? 'border-slate-700' : 'border-slate-300'}`} to="/admin/clients">
+                <Link className={navLink} to="/admin/clients">
                   Clients
                 </Link>
-                <Link className={`rounded-md border px-4 py-2 text-sm font-semibold ${isDark ? 'border-slate-700' : 'border-slate-300'}`} to="/admin/programs">
+                <Link className={navLink} to="/admin/programs">
                   Programs
                 </Link>
-                <Link className={`rounded-md border px-4 py-2 text-sm font-semibold ${isDark ? 'border-slate-700' : 'border-slate-300'}`} to="/admin/account">
+                <Link className={navLink} to="/admin/account">
                   Account
                 </Link>
               </>
             ) : (
               <>
-                <Link className={`rounded-md border px-4 py-2 text-sm font-semibold ${isDark ? 'border-slate-700' : 'border-slate-300'}`} to="/app">
+                <Link className={navLink} to="/app">
                   Portal
                 </Link>
-                <Link className={`rounded-md border px-4 py-2 text-sm font-semibold ${isDark ? 'border-slate-700' : 'border-slate-300'}`} to="/app/workouts">
+                <Link className={navLink} to="/app/workouts">
                   Workouts
                 </Link>
-                <Link className={`rounded-md border px-4 py-2 text-sm font-semibold ${isDark ? 'border-slate-700' : 'border-slate-300'}`} to="/app/account">
+                <Link className={navLink} to="/app/account">
                   Account
                 </Link>
               </>
             )}
             <ThemeToggle theme={theme} setTheme={setTheme} />
-            <button className="rounded-md bg-pink-500 px-4 py-2 text-sm font-semibold text-white" onClick={logout}>
+            <button
+              className={`border px-4 py-2 text-[0.78rem] font-semibold uppercase tracking-[0.06em] transition-colors ${
+                isDark
+                  ? 'border-bone/20 bg-bone text-charcoal hover:bg-butter'
+                  : 'border-charcoal/20 bg-charcoal text-bone hover:bg-olive'
+              }`}
+              onClick={logout}
+            >
               Logout
             </button>
           </nav>

@@ -199,7 +199,7 @@ export default function PublicHome({ theme, setTheme }) {
             <Link to="/login" className={`transition-colors hover:text-olive ${focusRing}`}>
               Portal
             </Link>
-            <ThemeToggle theme={theme} setTheme={setTheme} variant="plate" />
+            <ThemeToggle theme={theme} setTheme={setTheme} />
           </nav>
 
           <button
@@ -237,7 +237,7 @@ export default function PublicHome({ theme, setTheme }) {
               Portal
             </Link>
             <div className="py-3">
-              <ThemeToggle theme={theme} setTheme={setTheme} variant="plate" />
+              <ThemeToggle theme={theme} setTheme={setTheme} />
             </div>
           </div>
         </nav>
