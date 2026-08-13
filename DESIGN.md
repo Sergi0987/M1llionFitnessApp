@@ -78,6 +78,6 @@ These are design constraints here, not just copy rules:
 ## Known open items
 
 - The marginal plate rail is desktop-only; on phones the running head carries the plate reference.
-- The hero photograph is portrait. It takes its own column from `lg` so a wide screen never crops the figure; below `lg` it sits behind the type in a portrait viewport. Any replacement hero image should also be portrait.
+- The hero photograph is full-bleed atmosphere, not a portrait: dimmed to 80%, anchored `object-top`, under a vertical wash that stays light at the top so the subject's head reads and deepens to solid charcoal at the baseline, plus a left-to-right wash that carries the type. A wide viewport crops a portrait image hard, so anchoring to the top is what keeps the head in frame — a replacement image needs its subject in the upper third.
 - `client/index.html` ships the direction contract as an HTML comment, visible in view-source, pending the owner's decision.
 - `/privacy` and `/terms` are linked from nowhere on this page now, but no pages exist behind those routes.
