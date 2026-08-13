@@ -96,7 +96,7 @@ function Protected({ role, children, theme, setTheme }) {
 }
 
 export default function App() {
-  const [theme, setTheme] = useState(() => localStorage.getItem('m1_theme') || 'light');
+  const [theme, setTheme] = useState(() => localStorage.getItem('m1_theme') || 'dark');
 
   useEffect(() => {
     localStorage.setItem('m1_theme', theme);
